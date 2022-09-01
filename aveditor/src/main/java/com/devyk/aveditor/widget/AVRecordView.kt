@@ -62,7 +62,7 @@ public class AVRecordView : AVCameraView {
     /**
      * 配置打包器
      */
-    fun setPaker(packer: PackerType, outPath: String?) {
+    fun setPacker(packer: PackerType, outPath: String?) {
         mStreamController?.setPacker(packer, outPath)
     }
 
