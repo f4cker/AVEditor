@@ -92,7 +92,7 @@ public open class AVCameraView : GLSurfaceView,
      */
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
         /**
-         * 由于 咱们初始化传递的是 RENDERMODE_WHEN_DIRTY 手动渲染模式，当 Camera 有新的数据，我们就应该请求刷新
+         * 由于 咱们初始化传递的是 RENDER_MODE_WHEN_DIRTY 手动渲染模式，当 Camera 有新的数据，我们就应该请求刷新
          */
             requestRender()
     }
@@ -158,8 +158,7 @@ public open class AVCameraView : GLSurfaceView,
      * 释放 Camera 资源的时候调用
      */
     public open fun stopPreview() {
-
-        mRenderer?.onSurfaceDestroyed()
+        mRenderer.onSurfaceDestroyed()
         CameraHolder.instance().stopPreview()
         CameraHolder.instance().releaseCamera()
         CameraHolder.instance().release()
@@ -177,13 +176,18 @@ public open class AVCameraView : GLSurfaceView,
         return CameraHolder.instance().switchCamera()
     }
 
+    @Synchronized
+    fun switchLight(): Boolean {
+        return CameraHolder.instance().switchLight()
+    }
+
     /**
      * 内部包含已有的滤镜
      */
     fun setGPUImageFilter(type: AVFilterType?, listener: OnSelectFilterListener) {
         queueEvent {
-            val gpuImageFilter = mRenderer?.setGPUImageFilter(type)
-            listener?.onSelectFilter(gpuImageFilter)
+            val gpuImageFilter = mRenderer.setGPUImageFilter(type)
+            listener.onSelectFilter(gpuImageFilter)
         }
         requestRender()
     }
@@ -194,7 +198,7 @@ public open class AVCameraView : GLSurfaceView,
     @Synchronized
     fun <gpuImageFilter : GPUImageFilter> setGPUImageFilter(filter: gpuImageFilter) {
         queueEvent {
-            mRenderer?.setGPUImageFilter(filter)
+            mRenderer.setGPUImageFilter(filter)
         }
         requestRender()
     }
@@ -203,15 +207,15 @@ public open class AVCameraView : GLSurfaceView,
      * 添加水印
      */
     public fun addWatermark(watermark: Watermark?) {
-        mRenderer?.addWatermark(watermark)
+        mRenderer.addWatermark(watermark)
     }
 
     fun startRecord() {
-        mRenderer?.startRecord()
+        mRenderer.startRecord()
     }
 
     open fun stopRecord() {
-        mRenderer?.stopRecord()
+        mRenderer.stopRecord()
     }
 
 
