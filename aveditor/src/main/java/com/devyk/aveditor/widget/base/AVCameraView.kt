@@ -9,14 +9,13 @@ import android.view.SurfaceHolder
 import com.devyk.aveditor.callback.ICameraOpenListener
 import com.devyk.aveditor.callback.OnSelectFilterListener
 import com.devyk.aveditor.config.CameraConfiguration
-import com.devyk.aveditor.video.renderer.AVRecordRenderer
-import com.devyk.aveditor.video.camera.CameraHolder
-import javax.microedition.khronos.opengles.GL10
-
 import com.devyk.aveditor.entity.Speed
 import com.devyk.aveditor.entity.Watermark
+import com.devyk.aveditor.video.camera.CameraHolder
 import com.devyk.aveditor.video.filter.gpuimage.base.GPUImageFilter
 import com.devyk.aveditor.video.filter.helper.AVFilterType
+import com.devyk.aveditor.video.renderer.AVRecordRenderer
+import javax.microedition.khronos.opengles.GL10
 
 
 /**
@@ -133,7 +132,7 @@ public open class AVCameraView : GLSurfaceView,
     /**
      * 由于在 GLSurfaceView 内部没有回调可以判断该控件是否销毁了，固在当前重写  surfaceDestroyed ，将销毁生命周期传递下去
      */
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
         super.surfaceDestroyed(holder)
     }
 

@@ -51,15 +51,14 @@ class AVPlayView : GLSurfaceView, SurfaceHolder.Callback, GLSurfaceView.Renderer
         Thread(this).start()
     }
 
-
-    override fun surfaceCreated(holder: SurfaceHolder?) {
-        initSurface(holder!!.surface)
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        initSurface(holder.surface)
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder?, format: Int, w: Int, h: Int) {
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, w: Int, h: Int) {
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
         isExit = true
     }
 

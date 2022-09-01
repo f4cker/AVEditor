@@ -1,11 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.novoda.bintray-release'
-
 
 android {
-    compileSdkVersion rootProject.ext.android["compileSdkVersion"]
-    buildToolsVersion rootProject.ext.android["buildToolsVersion"]
+    compileSdkVersion ConfigData.compileSdkVersion
+    buildToolsVersion ConfigData.buildToolsVersion
 
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
@@ -14,21 +12,17 @@ android {
 
 
     defaultConfig {
-        minSdkVersion rootProject.ext.android["minSdkVersion"]
-        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
-        versionCode rootProject.ext.android["versionCode"]
-        versionName rootProject.ext.android["versionName"]
+        minSdkVersion ConfigData.minSdkVersion
+        targetSdkVersion ConfigData.targetSdkVersion
+        versionCode 1
+        versionName "0.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         externalNativeBuild {
             cmake {
-                //java.lang.UnsatisfiedLinkError: dlopen failed: library "libc++_shared.so" not found
                 arguments "-DANDROID_STL=c++_shared"
-//                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang", "-DANDROID_STL=c++_shared"
                 abiFilters "armeabi-v7a", "arm64-v8a"
-                //lame undefined reference to `bcopy'
-//                cppFlags "-frtti -fexceptions"
-                cFlags "-DSTDC_HEADERS"/* -DSTDC_HEADERS*/
+                cFlags "-DSTDC_HEADERS"
                 cppFlags "-std=c++11"
             }
         }
@@ -46,39 +40,20 @@ android {
         }
     }
 
-
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ["../thirdparties/ffmpeg/libs"]
-//            jniLibs.srcDirs = ["../thirdparties/marslog/libs"]
-//        }
-//    }
-
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libavcodec.so'
+        pickFirst 'lib/arm64-v8a/libavutil.so'
+        pickFirst 'lib/arm64-v8a/libavformat.so'
+        pickFirst 'lib/arm64-v8a/libavfilter.so'
+        pickFirst 'lib/arm64-v8a/libswresample.so'
+        pickFirst 'lib/arm64-v8a/libmarsxlog.so'
+    }
 
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
-}
-
-publish {
-    //bintray.com 用户名
-    userOrg = 'yangkun19921001'
-    // bintray 上仓库的名字
-    repoName = 'AVTools'
-    //jcenter上 的路径
-    groupId = 'com.devyk.avtools'
-    //项目名称
-    artifactId = 'AVTools'
-    //版本号
-    publishVersion = '0.0.1'// 描述
-    //描述
-    desc = '这是一款短视频编辑 SDK，仿 DouYin 音视频处理。功能包含有美颜、滤镜、贴纸、特效、录制、分段录制、速率录制、变声、配乐、rtmp 直播推流、图片转视频、剪辑等功能。'
-    //一般填 github 项目地址,一定是要有效的地址
-    website = 'https://github.com/yangkun19921001/AVEditor'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //test
-    testImplementation rootProject.ext.dependencies["junit"]
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api project(':base')
 }

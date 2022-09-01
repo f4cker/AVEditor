@@ -12,10 +12,7 @@ import com.devyk.ffmpeglib.ffmpeg.FFmpeg
 import com.devyk.ffmpeglib.util.FileUtils
 import com.devyk.ffmpeglib.util.TrackUtils
 import com.devyk.ffmpeglib.util.VideoUitls
-
 import java.io.IOException
-import java.lang.Exception
-import java.util.*
 
 
 /**
@@ -533,7 +530,7 @@ object AVEditor {
                 cmd = cmd.replace(FFMPEG_TAG, "");
             }
         } catch (e: Exception) {
-            Log.e("execCmd->", e.message)
+            Log.e("execCmd->", e.message.toString())
         }
         val parseArguments = FFmpeg.parseArguments(cmd)
         FFmpeg.executeAsync(parseArguments, duration, executeCallback)
