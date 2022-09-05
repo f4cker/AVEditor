@@ -1,16 +1,15 @@
 package com.devyk.aveditor.utils
 
-import java.io.File
-import java.io.IOException
-import android.provider.MediaStore
-import android.provider.DocumentsContract
 import android.content.ContentUris
-import android.os.Build
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import com.devyk.aveditor.utils.LogHelper.TAG
+import java.io.File
+import java.io.IOException
 import java.net.URISyntaxException
 
 
@@ -34,33 +33,33 @@ object FileUtils {
         )
     }
 
-    fun getFileByPath(filePath: String?): File? {
+    private fun getFileByPath(filePath: String): File {
         return File(filePath)
     }
 
-    fun createFileByDeleteOldFile(file: File?): Boolean {
+    private fun createFileByDeleteOldFile(file: File?): Boolean {
         if (file == null) return false
         // file exists and unsuccessfully delete then return false
         if (file.exists() && !file.delete()) return false
         if (!createOrExistsDir(file.parentFile)) return false
-        try {
-            return file.createNewFile()
+        return try {
+            file.createNewFile()
         } catch (e: IOException) {
             e.printStackTrace()
-            return false
+            false
         }
 
     }
 
-    fun createOrExistsDir(file: File?): Boolean {
+    private fun createOrExistsDir(file: File?): Boolean {
         return file != null && if (file.exists()) file.isDirectory else file.mkdirs()
     }
 
-    fun deleteFile(filePath: String?): Boolean =
+    private fun deleteFile(filePath: String): Boolean =
         deleteFile(getFileByPath(filePath))
 
 
-    fun deleteFile(file: File?): Boolean {
+    private fun deleteFile(file: File?): Boolean {
         if (file == null) return false
         if (file.exists() && file.delete())
             return true
@@ -83,80 +82,84 @@ object FileUtils {
 
     @Throws(URISyntaxException::class)
     fun getFilePath(context: Context, uri: Uri): String? {
-        var uri = uri
+        var tempUri = uri
         var selection: String? = null
         var selectionArgs: Array<String>? = null
         // Uri is different in versions after KITKAT (Android 4.4), we need to
-        if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(context.applicationContext, uri)) {
-            if (isExternalStorageDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
+        if (DocumentsContract.isDocumentUri(context.applicationContext, tempUri)) {
+            if (isExternalStorageDocument(tempUri)) {
+                val docId = DocumentsContract.getDocumentId(tempUri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
-            } else if (isDownloadsDocument(uri)) {
-                val id = DocumentsContract.getDocumentId(uri)
-                uri = ContentUris.withAppendedId(
+            } else if (isDownloadsDocument(tempUri)) {
+                val id = DocumentsContract.getDocumentId(tempUri)
+                tempUri = ContentUris.withAppendedId(
                     Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
                 )
-            } else if (isMediaDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
+            } else if (isMediaDocument(tempUri)) {
+                val docId = DocumentsContract.getDocumentId(tempUri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val type = split[0]
-                if ("image" == type) {
-                    uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                } else if ("video" == type) {
-                    uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                } else if ("audio" == type) {
-                    uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                when (split[0]) {
+                    "image" -> {
+                        tempUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    }
+                    "video" -> {
+                        tempUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    }
+                    "audio" -> {
+                        tempUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                    }
                 }
                 selection = "_id=?"
                 selectionArgs = arrayOf(split[1])
             }
         }
-        if ("content".equals(uri.scheme!!, ignoreCase = true)) {
+        if ("content".equals(tempUri.scheme!!, ignoreCase = true)) {
 
 
-            if (isGooglePhotosUri(uri)) {
-                return uri.lastPathSegment
+            if (isGooglePhotosUri(tempUri)) {
+                return tempUri.lastPathSegment
             }
 
             val projection = arrayOf(MediaStore.Images.Media.DATA)
             var cursor: Cursor? = null
             try {
                 cursor = context.contentResolver
-                    .query(uri, projection, selection, selectionArgs, null)
-                val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    .query(tempUri, projection, selection, selectionArgs, null)
+                val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index)
+                    return cursor.getString(columnIndex)
                 }
+                cursor.close()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
-        } else if ("file".equals(uri.scheme!!, ignoreCase = true)) {
-            return uri.path
+        } else if ("file".equals(tempUri.scheme!!, ignoreCase = true)) {
+            return tempUri.path
         }
         return null
     }
 
-    fun isExternalStorageDocument(uri: Uri): Boolean {
+    private fun isExternalStorageDocument(uri: Uri): Boolean {
         return "com.android.externalstorage.documents" == uri.authority
     }
 
-    fun isDownloadsDocument(uri: Uri): Boolean {
+    private fun isDownloadsDocument(uri: Uri): Boolean {
         return "com.android.providers.downloads.documents" == uri.authority
     }
 
-    fun isMediaDocument(uri: Uri): Boolean {
+    private fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
     }
 
-    fun isGooglePhotosUri(uri: Uri): Boolean {
+    private fun isGooglePhotosUri(uri: Uri): Boolean {
         return "com.google.android.apps.photos.content" == uri.authority
     }
 
 
     //删除文件夹
-    public fun deleteDirectory(folder: File) {
+    private fun deleteDirectory(folder: File) {
         if (folder.exists()) {
             val files = folder.listFiles() ?: return
             for (i in files.indices) {
@@ -173,7 +176,7 @@ object FileUtils {
     /**
      * 判断文件是否存在
      */
-    public fun isExists(path: String):Boolean {
+    fun isExists(path: String): Boolean {
         return File(path).exists()
     }
 

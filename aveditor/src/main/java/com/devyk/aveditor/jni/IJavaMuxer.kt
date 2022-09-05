@@ -1,7 +1,5 @@
 package com.devyk.aveditor.jni
 
-import com.devyk.aveditor.stream.packer.PackerType
-
 /**
  * <pre>
  *     author  : devyk on 2020-08-20 17:32
@@ -12,8 +10,8 @@ import com.devyk.aveditor.stream.packer.PackerType
  * </pre>
  */
 
-public interface IJavaMuxer {
+interface IJavaMuxer {
 
-    fun javaMergeVieo(inPath:ArrayList<String>,outPath:String)
+    fun javaMergeVideo(inPath: ArrayList<String>, outPath: String)
 
 }

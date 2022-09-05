@@ -37,7 +37,7 @@ class OutputOption(
             if (bitRate != 0) {
                 res.append(" -b ").append(bitRate).append("M")
             }
-            if (!outFormat.isEmpty()) {
+            if (outFormat.isNotEmpty()) {
                 res.append(" -f ").append(outFormat)
             }
             return res.toString()
@@ -49,14 +49,13 @@ class OutputOption(
      * @return 1
      */
     fun getSar(): String {
-        val res: String
-        when (sar) {
-            ONE_TO_ONE -> res = "1/1"
-            FOUR_TO_THREE -> res = "4/3"
-            THREE_TO_FOUR -> res = "3/4"
-            SIXTEEN_TO_NINE -> res = "16/9"
-            NINE_TO_SIXTEEN -> res = "9/16"
-            else -> res = "$width_/$height_"
+        val res: String = when (sar) {
+            ONE_TO_ONE -> "1/1"
+            FOUR_TO_THREE -> "4/3"
+            THREE_TO_FOUR -> "3/4"
+            SIXTEEN_TO_NINE -> "16/9"
+            NINE_TO_SIXTEEN -> "9/16"
+            else -> "$width_/$height_"
         }
         return res
     }
@@ -71,9 +70,9 @@ class OutputOption(
      * @param width 宽
      */
     fun setWidth(width: Int) {
-        var width = width
-        if (width % 2 != 0) width -= 1
-        this.width_ = width
+        var tempWidth = width
+        if (tempWidth % 2 != 0) tempWidth -= 1
+        this.width_ = tempWidth
     }
 
     /**
@@ -82,16 +81,16 @@ class OutputOption(
      * @param height 高
      */
     fun setHeight(height: Int) {
-        var height = height
-        if (height % 2 != 0) height -= 1
-        this.height_ = height
+        var tempHeight = height
+        if (tempHeight % 2 != 0) tempHeight -= 1
+        this.height_ = tempHeight
     }
 
     companion object {
-        internal val ONE_TO_ONE = 1// 1:1
-        internal val FOUR_TO_THREE = 2// 4:3
-        internal val SIXTEEN_TO_NINE = 3// 16:9
-        internal val NINE_TO_SIXTEEN = 4// 9:16
-        internal val THREE_TO_FOUR = 5// 3:4
+        internal const val ONE_TO_ONE = 1// 1:1
+        internal const val FOUR_TO_THREE = 2// 4:3
+        internal const val SIXTEEN_TO_NINE = 3// 16:9
+        internal const val NINE_TO_SIXTEEN = 4// 9:16
+        internal const val THREE_TO_FOUR = 5// 3:4
     }
 }
