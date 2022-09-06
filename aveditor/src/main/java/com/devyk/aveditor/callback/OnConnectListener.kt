@@ -9,7 +9,7 @@ package com.devyk.aveditor.callback
  *     desc    : This is OnConnectListener
  * </pre>
  */
-public interface OnConnectListener {
+interface OnConnectListener {
     /**
      * 开始链接
      */

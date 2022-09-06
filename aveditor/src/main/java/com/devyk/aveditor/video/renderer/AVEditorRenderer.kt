@@ -3,20 +3,15 @@ package com.devyk.aveditor.video.renderer
 
 import android.content.Context
 import android.opengl.GLSurfaceView
-import android.widget.Toast
 import com.devyk.aveditor.entity.Watermark
 import com.devyk.aveditor.entity.YUVEntity
 import com.devyk.aveditor.utils.LogHelper
-import com.devyk.aveditor.utils.ThreadUtils
 import com.devyk.aveditor.video.filter.*
 import com.devyk.aveditor.video.filter.gpuimage.base.GPUImageFilter
 import com.devyk.aveditor.video.filter.helper.AVFilterFactory
 import com.devyk.aveditor.video.filter.helper.AVFilterType
 import com.tencent.mars.xlog.Log
-import java.io.File
-import java.io.FileOutputStream
 import java.util.*
-import java.util.concurrent.LinkedBlockingQueue
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -30,10 +25,11 @@ import javax.microedition.khronos.opengles.GL10
  * </pre>
  */
 
-public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
+class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
 
 
     private var mContext: Context? = null
+
     /**
      * 默认 YUV 渲染
      */
@@ -73,7 +69,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
     /**
      * 绘制所有的过滤器索引，链式调用
      */
-    private var mDrawFilterIndex = 0;
+    private var mDrawFilterIndex = 0
 
     /**
      * 是否绘制 GPUImage
@@ -81,7 +77,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
     var isGpuimageDraw = false
 
     init {
-        mContext = context;
+        mContext = context
     }
 
 
@@ -96,7 +92,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
      * 设置 YUV 过滤器
      */
     fun <T : BaseFBOFilter> setYuvFilter(t: T) {
-        mYUVRenderer = t as YUVFilter;
+        mYUVRenderer = t as YUVFilter
     }
 
 
@@ -163,23 +159,23 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
      */
     private fun onFilterDraw() {
         val yuvEntity = poll()
-        var fboTextureId = -1;
+        var fboTextureId = -1
         yuvEntity?.let {
             if (yuvEntity.width != 0 && yuvEntity.height != 0) {
                 //绘制过滤器，用于视频美化或者其它处理
                 if (mFilters.size > 0) {
                     try {
-                        fboTextureId = (mFilters.get(mDrawFilterIndex) as YUVFilter)?.onDrawFrame(
+                        fboTextureId = (mFilters.get(mDrawFilterIndex) as YUVFilter).onDrawFrame(
                             yuvEntity.width,
                             yuvEntity.height,
                             yuvEntity.y,
                             yuvEntity.u,
                             yuvEntity.v
-                        )!!
+                        )
                         //这里的纹理需要进行录制
                         var showScreenTexture = onDrawFrameFilter(fboTextureId)
                     } catch (err: Exception) {
-                        LogHelper.e(Log.TAG, err?.message)
+                        LogHelper.e(Log.TAG, err.message)
                     }
                 }
 
@@ -212,7 +208,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
         if (filter is ScreenFilter && mGPUImageFilter != null && !isGpuimageDraw) {
             gpuTextID = mGPUImageFilter?.onDrawFrame(gpuTextID)!!
         }
-        return onDrawFrameFilter(filter?.onDrawFrame(gpuTextID))
+        return onDrawFrameFilter(filter.onDrawFrame(gpuTextID))
 
     }
 
@@ -251,7 +247,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
      * 内部包含已有的滤镜
      */
     fun setGPUImageFilter(type: AVFilterType?): GPUImageFilter? {
-        gpuDestory()
+        gpuDestroy()
         mGPUImageFilter = mContext?.let { context -> AVFilterFactory.getFilters(context, type) }
         //3、初始化 GPUImageFilter
         onReadyGPUImageFilter(mGPUImageFilter)
@@ -262,16 +258,16 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
     }
 
 
-    private fun gpuDestory() {
+    private fun gpuDestroy() {
         mGPUImageFilter?.destroy()
         mGPUImageFilter = null
     }
 
-    private fun onReadyGPUImageFilter(gpuimage: GPUImageFilter?) {
-        gpuimage?.let { gpuimage ->
-            gpuimage.init()
-            gpuimage.onDisplaySizeChanged(mSurfaceWidth, mSurfaceHeight)
-            gpuimage.onInputSizeChanged(mSurfaceWidth, mSurfaceHeight)
+    private fun onReadyGPUImageFilter(gpuImageFilter: GPUImageFilter?) {
+        gpuImageFilter?.let { filter ->
+            filter.init()
+            filter.onDisplaySizeChanged(mSurfaceWidth, mSurfaceHeight)
+            filter.onInputSizeChanged(mSurfaceWidth, mSurfaceHeight)
         }
 
     }
@@ -281,7 +277,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
      */
     @Synchronized
     fun <gpuImageFilter : GPUImageFilter> setGPUImageFilter(filter: gpuImageFilter) {
-        gpuDestory()
+        gpuDestroy()
         mGPUImageFilter = filter
         //3、初始化 GPUImageFilter
         onReadyGPUImageFilter(mGPUImageFilter)
@@ -321,7 +317,7 @@ public class AVEditorRenderer(context: Context) : GLSurfaceView.Renderer {
      */
     fun onSurfaceDestroyed() {
         for (filter in mFilters)
-            filter?.release()
+            filter.release()
         mFilters.clear()
         mAddFilters.clear()
     }

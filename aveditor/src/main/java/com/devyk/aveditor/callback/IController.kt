@@ -14,7 +14,7 @@ import java.nio.ByteBuffer
  *     desc    : This is IController
  * </pre>
  */
-public interface IController {
+interface IController {
 
     fun start(speed: Speed = Speed.NORMAL)
 
@@ -31,12 +31,11 @@ public interface IController {
     fun setVideoBps(bps:Int){}
 
 
-
-    public interface OnAudioDataListener {
+    interface OnAudioDataListener {
         /**
          * 当 Audio 编码数据的时候
          */
-        fun onAudioData(bb: ByteBuffer, bi: MediaCodec.BufferInfo);
+        fun onAudioData(bb: ByteBuffer, bi: MediaCodec.BufferInfo)
 
         /**
          * 编码的输出格式
@@ -44,22 +43,22 @@ public interface IController {
         fun onAudioOutformat(outputFormat: MediaFormat?)
 
 
-        fun onError(error:String?);
+        fun onError(error: String?)
 
 
     }
 
-    public interface OnVideoDataListener {
+    interface OnVideoDataListener {
         /**
          * 当 Audio 编码数据的时候
          */
-        fun onVideoData(bb: ByteBuffer?, bi: MediaCodec.BufferInfo?);
+        fun onVideoData(bb: ByteBuffer?, bi: MediaCodec.BufferInfo?)
 
         /**
          * 编码的输出格式
          */
-        fun onVideoOutformat(outputFormat: MediaFormat?);
+        fun onVideoOutFormat(outputFormat: MediaFormat?)
 
-        fun onError(error:String?);
+        fun onError(error: String?)
     }
 }

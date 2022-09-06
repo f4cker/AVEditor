@@ -13,9 +13,10 @@ import com.devyk.aveditor.utils.OpenGLUtils
  *     desc    : This is BaseFBOFilter
  * </pre>
  */
-public open class BaseFBOFilter : BaseFilter {
+open class BaseFBOFilter : BaseFilter {
     //FBO id
     protected var mFrameBuffers: IntArray? = null
+
     //fbo 纹理id
     protected var mFrameBufferTextures: IntArray? = null
 
@@ -75,7 +76,7 @@ public open class BaseFBOFilter : BaseFilter {
     }
 
 
-    public fun getTextureId():Int= mFrameBufferTextures!![0]
+    fun getTextureId(): Int = mFrameBufferTextures!![0]
 
     override fun release() {
         super.release()

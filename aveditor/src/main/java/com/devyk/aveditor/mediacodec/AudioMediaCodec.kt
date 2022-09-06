@@ -4,9 +4,7 @@ import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList
 import android.media.MediaFormat
-import com.devyk.aveditor.audio.AudioUtils
 import com.devyk.aveditor.config.AudioConfiguration
-
 import java.nio.ByteBuffer
 
 /**
@@ -18,7 +16,7 @@ import java.nio.ByteBuffer
  *     desc    : This is AudioMediaCodec
  * </pre>
  */
-public class AudioMediaCodec {
+class AudioMediaCodec {
     companion object {
 
         fun selectCodec(mimeType: String): MediaCodecInfo? {
@@ -65,7 +63,7 @@ public class AudioMediaCodec {
                     mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
                 } else if (configuration.codeType == AudioConfiguration.CodeType.DECODE) {
                     //用来标记AAC是否有adts头，1->有
-                    format.setInteger(MediaFormat.KEY_IS_ADTS, configuration.adts);
+                    format.setInteger(MediaFormat.KEY_IS_ADTS, configuration.adts)
                     //ByteBuffer key（暂时不了解该参数的含义，但必须设置）
                     val data = byteArrayOf(0x11.toByte(), 0x90.toByte())
                     val csd_0 = ByteBuffer.wrap(data)

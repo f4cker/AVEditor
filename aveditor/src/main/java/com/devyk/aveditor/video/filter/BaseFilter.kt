@@ -3,12 +3,9 @@ package com.devyk.aveditor.video.filter
 import android.content.Context
 import android.opengl.GLES20
 import com.devyk.aveditor.utils.OpenGLUtils
-import com.devyk.aveditor.utils.Rotation
-import com.devyk.aveditor.utils.TextureRotationUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import java.util.*
 
 /**
  * <pre>
@@ -19,13 +16,14 @@ import java.util.*
  *     desc    : This is BaseFilter
  * </pre>
  */
-public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentShaderId: Int) : IFilter {
+open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentShaderId: Int) : IFilter {
 
 
     /**
      * 顶点 Buffer
      */
     protected var mGLVertexBuffer: FloatBuffer
+
     /**
      * 物体纹理 Buffer
      */
@@ -57,7 +55,7 @@ public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentSha
 
     /**
      * 片元着色器
-     * Samlpe2D 扩展 samplerExternalOES
+     * Sample2D 扩展 samplerExternalOES
      */
     protected var vTexture: Int = 0
 
@@ -76,27 +74,27 @@ public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentSha
         mGLVertexBuffer = ByteBuffer.allocateDirect(4 * 2 * 4)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
-        mGLVertexBuffer?.clear()
+        mGLVertexBuffer.clear()
 
         /**
          * 顶点坐标
          */
         val VERTEX = floatArrayOf(-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f)
-        mGLVertexBuffer?.put(VERTEX)
+        mGLVertexBuffer.put(VERTEX)
 
 
         mGLTextureBuffer = ByteBuffer.allocateDirect(4 * 2 * 4)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
-        mGLTextureBuffer?.clear()
+        mGLTextureBuffer.clear()
         /**
          * 片元坐标
          */
         val TEXTURE = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f)
-        mGLTextureBuffer?.put(TEXTURE)
+        mGLTextureBuffer.put(TEXTURE)
 
 
-        initilize(context)
+        initialize(context)
         changeCoordinate()
     }
 
@@ -109,16 +107,16 @@ public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentSha
     }
 
     protected fun changeCoordinate(floatArray: FloatArray) {
-        floatArray?.let {
-            mGLTextureBuffer?.clear()
-            mGLTextureBuffer?.put(floatArray)
+        floatArray.let {
+            mGLTextureBuffer.clear()
+            mGLTextureBuffer.put(floatArray)
         }
     }
 
-    protected open fun initilize(context: Context?) {
-        val vertexSharder = OpenGLUtils.readRawTextFile(context, mVertexShaderId)
-        val framentShader = OpenGLUtils.readRawTextFile(context, mFragmentShaderId)
-        mGLProgramId = OpenGLUtils.loadProgram(vertexSharder, framentShader)
+    protected open fun initialize(context: Context?) {
+        val vertexShader = OpenGLUtils.readRawTextFile(context, mVertexShaderId)
+        val fragmentShader = OpenGLUtils.readRawTextFile(context, mFragmentShaderId)
+        mGLProgramId = OpenGLUtils.loadProgram(vertexShader, fragmentShader)
         // 获得着色器中的 attribute 变量 position 的索引值
         vPosition = GLES20.glGetAttribLocation(mGLProgramId, "vPosition")
         vCoord = GLES20.glGetAttribLocation(
@@ -139,12 +137,12 @@ public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentSha
 
 
     override fun onReady(width: Int, height: Int) {
-        this.mSurfaceWidth = width;
+        this.mSurfaceWidth = width
         this.mSurfaceHeight = height
 
     }
 
-    override open fun onDrawFrame(textureId: Int): Int {
+    override fun onDrawFrame(textureId: Int): Int {
         //设置显示窗口
         GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight)
 
@@ -152,11 +150,11 @@ public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentSha
         GLES20.glUseProgram(mGLProgramId)
 
         //传递坐标
-        mGLVertexBuffer?.position(0)
+        mGLVertexBuffer.position(0)
         GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 0, mGLVertexBuffer)
         GLES20.glEnableVertexAttribArray(vPosition)
 
-        mGLTextureBuffer?.position(0)
+        mGLTextureBuffer.position(0)
         GLES20.glVertexAttribPointer(vCoord, 2, GLES20.GL_FLOAT, false, 0, mGLTextureBuffer)
         GLES20.glEnableVertexAttribArray(vCoord)
 
@@ -170,7 +168,7 @@ public open class BaseFilter(context: Context?, vertexShaderID: Int, fragmentSha
         return textureId
     }
 
-    override open fun release() {
+    override fun release() {
         GLES20.glDeleteProgram(mGLProgramId)
     }
 

@@ -17,29 +17,28 @@ import java.nio.ByteBuffer
  * </pre>
  */
 
-public interface IVideoCodec {
-
+interface IVideoCodec {
 
 
     /**
      * 初始化编码器
      */
-    fun prepare(videoConfiguration: VideoConfiguration = VideoConfiguration.createDefault()){};
+    fun prepare(videoConfiguration: VideoConfiguration = VideoConfiguration.createDefault()) {}
 
     /**
      * start 编码
      */
-    fun start(speed: Speed);
+    fun start(speed: Speed)
 
     /**
      * 停止编码
      */
-    fun stop();
+    fun stop()
 
     /**
      * 返回编码好的 H264 数据
      */
-    abstract fun onVideoEncode(bb: ByteBuffer?, mBufferInfo: MediaCodec.BufferInfo)
+    fun onVideoEncode(bb: ByteBuffer?, mBufferInfo: MediaCodec.BufferInfo)
 
 
 }

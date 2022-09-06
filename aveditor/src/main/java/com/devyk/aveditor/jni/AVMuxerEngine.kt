@@ -11,9 +11,8 @@ import com.devyk.aveditor.muxer.JavaMp4Muxer
  *     desc    : This is AVMuxerEngine
  * </pre>
  */
-public class AVMuxerEngine : INativeMuxer {
-
-    public override fun initMuxer(
+class AVMuxerEngine : INativeMuxer {
+    override fun initMuxer(
         outPath: String?,
         videoWidth: Int,
         videoHeight: Int,
@@ -44,7 +43,7 @@ public class AVMuxerEngine : INativeMuxer {
     }
 
 
-    private external fun native_enqueue(byteArray: ByteArray?, isAudio: Boolean, pts: Long);
+    private external fun native_enqueue(byteArray: ByteArray?, isAudio: Boolean, pts: Long)
 
     private external fun native_close()
 
@@ -60,7 +59,7 @@ public class AVMuxerEngine : INativeMuxer {
     )
 
 
-    public fun javaMergeVieo(inPath:ArrayList<String>,outPath:String){
+    fun javaMergeVieo(inPath: ArrayList<String>, outPath: String) {
         val javaMp4Muxer = JavaMp4Muxer(inPath, outPath)
         javaMp4Muxer.merge()
     }

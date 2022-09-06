@@ -3,10 +3,9 @@ package com.devyk.aveditor.mediacodec
 import android.media.MediaCodec
 import android.media.MediaFormat
 import android.util.Log
-import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.config.AudioConfiguration
 import com.devyk.aveditor.entity.Speed
-
+import com.devyk.aveditor.utils.LogHelper
 import java.nio.ByteBuffer
 
 
@@ -53,9 +52,9 @@ abstract class BaseAudioCodec(private var mAudioConfiguration: AudioConfiguratio
     }
 
     @Synchronized
-    override fun start(speed: Speed) {
+    override fun start(mSpeed: Speed) {
         AAC_FRAME_TIME_US = 1024 * 1000 * 1000 / mAudioConfiguration?.frequency!!
-        mSpeed = speed.value
+        this.mSpeed = mSpeed.value
         mPts = 0
         frameIndex = 0
         mMediaCodec = AudioMediaCodec.getAudioMediaCodec(mAudioConfiguration!!)
@@ -79,7 +78,7 @@ abstract class BaseAudioCodec(private var mAudioConfiguration: AudioConfiguratio
             return
         }
         val inputBuffers = mMediaCodec!!.inputBuffers
-        var outputBuffers = mMediaCodec!!.outputBuffers
+        val outputBuffers = mMediaCodec!!.outputBuffers
         val inputBufferIndex = mMediaCodec!!.dequeueInputBuffer(12000)
 
         var inputSize = 0
@@ -96,18 +95,18 @@ abstract class BaseAudioCodec(private var mAudioConfiguration: AudioConfiguratio
                 inputBuffer.position(0);
                 inputSize = input.size
             }
-            var pts = frameIndex * inputSize * 1000 / mAudioConfiguration?.frequency!!
+            val pts = frameIndex * inputSize * 1000 / mAudioConfiguration?.frequency!!
             LogHelper.i(TAG,"audio queuePcmBuffer $pts size:$inputSize");
             mMediaCodec!!.queueInputBuffer(inputBufferIndex, 0, inputSize, pts, 0)
             frameIndex++
         }
         var outputBufferIndex = mMediaCodec!!.dequeueOutputBuffer(mBufferInfo, 12000)
         if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-            onAudioOutformat(mMediaCodec?.outputFormat)
+            onAudioOutFormat(mMediaCodec?.outputFormat)
         }
 
         while (outputBufferIndex >= 0) {
-            val outputBuffer = outputBuffers?.get(outputBufferIndex)
+            val outputBuffer = outputBuffers[outputBufferIndex]
             outputBuffer?.let { outputBuffer ->
                 if (mBufferInfo.size != 0) {
                     if (!detectTimeError && lastAudioFrameTimeUs != -1L && mBufferInfo.presentationTimeUs < lastAudioFrameTimeUs + AAC_FRAME_TIME_US) {
@@ -139,7 +138,7 @@ abstract class BaseAudioCodec(private var mAudioConfiguration: AudioConfiguratio
     }
 
 
-    abstract fun onAudioOutformat(outputFormat: MediaFormat?)
+    abstract fun onAudioOutFormat(outputFormat: MediaFormat?)
 
     @Synchronized
     override fun stop() {
@@ -169,12 +168,13 @@ abstract class BaseAudioCodec(private var mAudioConfiguration: AudioConfiguratio
     /**
      * 获取输出的格式
      */
-    public fun getOutputFormat(): MediaFormat? = mMediaCodec?.outputFormat
+    fun getOutputFormat(): MediaFormat? = mMediaCodec?.outputFormat
 
 
-    var frameIndex = 0L;
+    var frameIndex = 0L
+
     private fun getCurFramePts(): Long {
-        var pts = frameIndex * (1000 / 25 / 0.25) * 1000
+        val pts = frameIndex * (1000 / 25 / 0.25) * 1000
         return pts.toLong()
     }
 

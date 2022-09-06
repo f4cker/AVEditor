@@ -10,7 +10,7 @@ interface ISpeedController {
      * @param samplingRate 采样率
      * @param pitchSemi 变调率
      */
-    public fun initSpeedController(
+    fun initSpeedController(
         track: Int,
         channels: Int,
         samplingRate: Int,
@@ -21,17 +21,17 @@ interface ISpeedController {
     /**
      * 放入 PCM 数据
      */
-    public fun putData(track: Int, input: ByteArray, length: Int): Int
+    fun putData(track: Int, input: ByteArray, length: Int): Int
 
     /**
      * 取出变速之后的 PCM 数据
      */
-    public fun getData(track: Int, out: ShortArray, length: Int): Int
+    fun getData(track: Int, out: ShortArray, length: Int): Int
 
     /**
      * 关闭资源
      */
-    public fun close(track: Int)
+    fun close(track: Int)
 
-    public fun setRecordSpeed(track: Int, speed: Speed = Speed.NORMAL)
+    fun setRecordSpeed(track: Int, speed: Speed = Speed.NORMAL)
 }

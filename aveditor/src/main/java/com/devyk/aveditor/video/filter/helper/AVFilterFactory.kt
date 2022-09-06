@@ -165,17 +165,17 @@ public class AVFilterFactory{
         }
 
         fun <T : GPUImageFilter> getAdjustFilter(
-            gpuimage: T?
-        ): AVGPUImageFliterTools.FilterAdjuster? {
-            gpuimage?.let {gpuimage->
-                if (AVGPUImageFliterTools.FilterAdjuster(gpuimage).canAdjust()) {
-                    return AVGPUImageFliterTools.FilterAdjuster(gpuimage)
+            gpuImageFilter: T?
+        ): AVGPUImageFilterTools.FilterAdjuster? {
+            gpuImageFilter?.let { filter ->
+                if (AVGPUImageFilterTools.FilterAdjuster(filter).canAdjust()) {
+                    return AVGPUImageFilterTools.FilterAdjuster(filter)
                 }
             }
-           return null
+            return null
         }
 
-        public fun getExFilter(): GPUImageFilter? = null
+        fun getExFilter(): GPUImageFilter? = null
 
         fun getCurrentFilterType(): AVFilterType {
             return filterType

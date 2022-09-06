@@ -1,11 +1,11 @@
 package com.devyk.aveditor.muxer
 
-import android.media.MediaFormat
-import android.media.MediaExtractor
+import android.annotation.TargetApi
 import android.media.MediaCodec
 import android.media.MediaCodec.BufferInfo
+import android.media.MediaExtractor
+import android.media.MediaFormat
 import android.media.MediaMuxer
-import android.annotation.TargetApi
 import android.util.Log
 import java.io.IOException
 import java.nio.ByteBuffer
@@ -141,13 +141,13 @@ public class JavaMp4Muxer(private val mVideoList: ArrayList<String>, private val
 
                 val outTrackIndex: Int
                 val extractor: MediaExtractor
-                val currenttrackIndex: Int
+                val currentTrackIndex: Int
                 if ((!hasVideo || audioPts - videoPts <= 50000L) && hasAudio) {
-                    currenttrackIndex = inAudioTrackIndex
+                    currentTrackIndex = inAudioTrackIndex
                     outTrackIndex = mOutAudioTrackIndex
                     extractor = audioExtractor
                 } else {
-                    currenttrackIndex = inVideoTrackIndex
+                    currentTrackIndex = inVideoTrackIndex
                     outTrackIndex = mOutVideoTrackIndex
                     extractor = videoExtractor
                 }
@@ -155,21 +155,21 @@ public class JavaMp4Muxer(private val mVideoList: ArrayList<String>, private val
                 mReadBuf.rewind()
                 val chunkSize = extractor.readSampleData(mReadBuf, 0)//读取帧数据
                 if (chunkSize < 0) {
-                    if (currenttrackIndex == inVideoTrackIndex) {
+                    if (currentTrackIndex == inVideoTrackIndex) {
                         hasVideo = false
-                    } else if (currenttrackIndex == inAudioTrackIndex) {
+                    } else if (currentTrackIndex == inAudioTrackIndex) {
                         hasAudio = false
                     }
                 } else {
-                    if (extractor.sampleTrackIndex != currenttrackIndex) {
+                    if (extractor.sampleTrackIndex != currentTrackIndex) {
                         Log.e(
                             TAG,
-                            "WEIRD: got sample from track " + extractor.sampleTrackIndex + ", expected " + currenttrackIndex
+                            "WEIRD: got sample from track " + extractor.sampleTrackIndex + ", expected " + currentTrackIndex
                         )
                     }
 
                     presentationTimeUs = extractor.sampleTime//读取帧的pts
-                    if (currenttrackIndex == inVideoTrackIndex) {
+                    if (currentTrackIndex == inVideoTrackIndex) {
                         videoPts = presentationTimeUs
                     } else {
                         audioPts = presentationTimeUs
@@ -197,9 +197,9 @@ public class JavaMp4Muxer(private val mVideoList: ArrayList<String>, private val
                         )
                     )
 
-                    val presentationTimeUs = info.presentationTimeUs
+                    val tempPresentationTimeUs = info.presentationTimeUs
 
-                    Log.e(TAG,"合成进度：${presentationTimeUs/1000_000}")
+                    Log.e(TAG, "合成进度：${tempPresentationTimeUs / 1000_000}")
 
                     mMuxer!!.writeSampleData(outTrackIndex, mReadBuf, info)//写入文件
                     extractor.advance()

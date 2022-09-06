@@ -18,7 +18,7 @@ import com.devyk.aveditor.utils.EGLUtils
  *     desc    : This is CameraRecorder 摄像头录制
  * </pre>
  */
-public class CameraRecorder(context: Context, textureId: Int, eglContext: EGLContext?) : VideoEncoder() {
+class CameraRecorder(context: Context, textureId: Int, eglContext: EGLContext?) : VideoEncoder() {
 
 
     protected var mEGLContext: EGLContext?
@@ -26,7 +26,7 @@ public class CameraRecorder(context: Context, textureId: Int, eglContext: EGLCon
     private var mEGLUtils: EGLUtils? = null
     private var mContext: Context? = null
     private var mHandler: Handler? = null
-    private var mTextureId = -1;
+    private var mTextureId = -1
     private var isPause = false
 
     init {
@@ -54,7 +54,7 @@ public class CameraRecorder(context: Context, textureId: Int, eglContext: EGLCon
         }
     }
 
-
+    @Synchronized
     override fun start(speed: Speed) {
         super.start(speed)
 
@@ -65,11 +65,11 @@ public class CameraRecorder(context: Context, textureId: Int, eglContext: EGLCon
         mEGLUtils?.release()
     }
 
-    public fun pause() {
+    fun pause() {
         isPause = true
     }
 
-    public fun resume() {
+    fun resume() {
         isPause = false
     }
 

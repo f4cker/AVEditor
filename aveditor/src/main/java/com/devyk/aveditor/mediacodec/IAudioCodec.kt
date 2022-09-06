@@ -11,7 +11,7 @@ import com.devyk.aveditor.entity.Speed
  *     desc    : This is ICodec
  * </pre>
  */
-public interface IAudioCodec{
+interface IAudioCodec {
 
 
     /**
@@ -27,5 +27,5 @@ public interface IAudioCodec{
     /**
      * 停止编码
      */
-    fun stop();
+    fun stop()
 }

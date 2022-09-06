@@ -3,7 +3,6 @@ package com.devyk.aveditor.jni
 import com.devyk.aveditor.callback.IYUVDataListener
 import com.devyk.aveditor.entity.MediaEntity
 import com.devyk.aveditor.entity.Speed
-import java.util.ArrayList
 
 /**
  * <pre>
@@ -14,62 +13,62 @@ import java.util.ArrayList
  *     desc    : This is IPlayer
  * </pre>
  */
-public interface IPlayer {
+interface IPlayer {
     /**
      * init 初始化
      */
-    public fun initSurface(surface: Any)
+    fun initSurface(surface: Any)
 
     /**
      * 设置播放源
      */
-    public fun setDataSource(source: String?)
+    fun setDataSource(source: String?)
 
     /**
      * 设置硬件解码
      */
-    public fun setMediaCodec(isMediacodec:Boolean)
+    fun setMediaCodec(isMediacodec: Boolean)
 
     /**
      * 设置多个播放源第一个播放完成之后再播放第二个
      */
-    public fun setDataSource(sources: ArrayList<MediaEntity>?)
+    fun setDataSource(sources: ArrayList<MediaEntity>?)
 
 
     /**
      * 设置播放的声音音量
      */
-    public fun setPlayVolume(v:Int);
+    fun setPlayVolume(v: Int)
 
     /**
      * 设置播放的速率
      */
-    public fun  setPlaySpeed(speed: Speed)
+    fun setPlaySpeed(speed: Speed)
 
     /**
      * 播放
      */
-    public fun start()
+    fun start()
 
     /**
      * 播放
      */
-    public fun progress(): Double
+    fun progress(): Double
 
     /**
      * 暂停
      */
-    public fun setPause(status: Boolean)
+    fun setPause(status: Boolean)
 
     /**
      * 指定跳转到某个时间点播放
      */
-    public fun seekTo(seek: Double): Int;
+    fun seekTo(seek: Double): Int
 
     /**
      * 停止
      */
-    public fun stop()
+    fun stop()
 
     /**
      * 是否在native 端渲染

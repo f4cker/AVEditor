@@ -9,12 +9,12 @@ package com.devyk.aveditor.audio
  *     desc    : This is IThread
  * </pre>
  */
-public interface IThread {
+interface IThread {
 
     /**
      * 开始执行线程
      */
-    fun start(main:()->Unit)
+    fun start(main: () -> Unit)
 
     /**
      * 停止执行
@@ -34,5 +34,5 @@ public interface IThread {
     /**
      * 是否运行
      */
-    fun isRuning(): Boolean
+    fun isRunning(): Boolean
 }

@@ -14,75 +14,81 @@ import com.devyk.aveditor.utils.LogHelper
  *     desc    : This is AVPlayerEngine
  * </pre>
  */
-public class AVPlayerEngine : IPlayer {
+class AVPlayerEngine : IPlayer {
 
     private var mIYUVDataListener: IYUVDataListener? = null
 
     /**
      * 设置是否硬件解码
      */
-    public override external fun setMediaCodec(isMediacodec: Boolean)
+    external override fun setMediaCodec(isMediacodec: Boolean)
 
 
-    public external override fun setPlayVolume(v: Int);
+    external override fun setPlayVolume(v: Int)
 
     override fun setPlaySpeed(speed: Speed) {
         setPlaySpeed(speed.value)
     }
 
-    private external fun setPlaySpeed(speed: Double);
+    private external fun setPlaySpeed(speed: Double)
 
     /**
      * init 初始化
      */
-    public external override fun initSurface(surface: Any)
+    external override fun initSurface(surface: Any)
 
     /**
      * 设置播放源
      */
-    public external override fun setDataSource(source: String?)
+    external override fun setDataSource(source: String?)
 
     /**
      * 设置播放源
      */
-    public external override fun setDataSource(sources: ArrayList<MediaEntity>?)
+    external override fun setDataSource(sources: ArrayList<MediaEntity>?)
 
     /**
      * 播放
      */
-    public external override fun start()
+    external override fun start()
 
     /**
      * 播放
      */
-    public external override fun progress(): Double
+    external override fun progress(): Double
 
     /**
      * 暂停
      */
-    public external override fun setPause(status: Boolean)
+    external override fun setPause(status: Boolean)
 
     /**
      * 指定跳转到某个时间点播放
      */
-    public external override fun seekTo(seek: Double): Int;
+    external override fun seekTo(seek: Double): Int
 
     /**
      * 停止
      */
-    public external override fun stop()
+    external override fun stop()
 
     /**
      * 设置是否在 native 端进行渲染
      */
-    override external fun setNativeRender(b: Boolean);
+    external override fun setNativeRender(b: Boolean)
 
 
     /**
      * 接收来自 Native 发送过来的 YUV 数据
      */
-    fun onRecevierFromNativeYUVData(width: Int, height: Int, y: ByteArray, u: ByteArray, v: ByteArray) {
-        LogHelper.d("onRecevierFromNativeYUVData", "width:$width height:$height")
+    fun onReceiverFromNativeYUVData(
+        width: Int,
+        height: Int,
+        y: ByteArray,
+        u: ByteArray,
+        v: ByteArray
+    ) {
+        LogHelper.d("onReceiverFromNativeYUVData", "width:$width height:$height")
         mIYUVDataListener?.onYUV420pData(width, height, y, u, v)
     }
 

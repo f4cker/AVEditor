@@ -31,7 +31,7 @@ import java.util.*
  *     desc    : This is StreamController
  * </pre>
  */
-public class StreamController : IController.OnAudioDataListener, IController.OnVideoDataListener,
+class StreamController : IController.OnAudioDataListener, IController.OnVideoDataListener,
     Packer.OnPacketListener {
 
 
@@ -106,9 +106,15 @@ public class StreamController : IController.OnAudioDataListener, IController.OnV
     }
 
     private fun getCurData(fileType:String?="mp4"): String? {
-        val filePath = "${mContext?.cacheDir}${File.separator}${SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(Date())}/.${fileType}"
-        var exists = FileUtils.createFileByDeleteOldFile(
-            "${mContext?.cacheDir}${File.separator}${SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(Date())}/.${fileType}"
+        val filePath = "${mContext?.cacheDir}${File.separator}${
+            SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(Date())
+        }/.${fileType}"
+        val exists = FileUtils.createFileByDeleteOldFile(
+            "${mContext?.cacheDir}${File.separator}${
+                SimpleDateFormat("yyyy-MM-dd-HH:mm:ss").format(
+                    Date()
+                )
+            }/.${fileType}"
         )
         return if (exists) filePath else null
     }
@@ -215,7 +221,7 @@ public class StreamController : IController.OnAudioDataListener, IController.OnV
     /**
      * 视频输出格式
      */
-    override fun onVideoOutformat(outputFormat: MediaFormat?) {
+    override fun onVideoOutFormat(outputFormat: MediaFormat?) {
         //这里拿到输出格式是为了打包用
         mPacker?.onVideoOutformat(outputFormat)
     }

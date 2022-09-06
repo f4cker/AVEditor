@@ -10,6 +10,6 @@ package com.devyk.aveditor.callback
  * </pre>
  */
 
-public interface ICameraOpenListener {
+interface ICameraOpenListener {
     fun onCameraOpen()
 }

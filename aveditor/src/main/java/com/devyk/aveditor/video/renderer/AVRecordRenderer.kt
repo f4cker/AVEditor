@@ -7,11 +7,13 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import com.devyk.aveditor.entity.Watermark
 import com.devyk.aveditor.utils.LogHelper
-import com.devyk.aveditor.video.filter.*
+import com.devyk.aveditor.video.filter.CameraFilter
+import com.devyk.aveditor.video.filter.IFilter
+import com.devyk.aveditor.video.filter.ScreenFilter
+import com.devyk.aveditor.video.filter.WatermarkFilter
 import com.devyk.aveditor.video.filter.gpuimage.base.GPUImageFilter
 import com.devyk.aveditor.video.filter.helper.AVFilterFactory
 import com.devyk.aveditor.video.filter.helper.AVFilterType
-
 import com.tencent.mars.xlog.Log.TAG
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -26,7 +28,7 @@ import javax.microedition.khronos.opengles.GL10
  *     desc    : This is AVRecordRenderer 负责视频处理相关的渲染
  * </pre>
  */
-public class AVRecordRenderer(context: Context?) :
+class AVRecordRenderer(context: Context?) :
     GLSurfaceView.Renderer {
 
     /**
@@ -74,7 +76,7 @@ public class AVRecordRenderer(context: Context?) :
     /**
      * 绘制所有的过滤器索引，链式调用
      */
-    private var mDrawFilterIndex = 0;
+    private var mDrawFilterIndex = 0
 
 
     private var mContext: Context? = null
@@ -134,11 +136,11 @@ public class AVRecordRenderer(context: Context?) :
         onReadyFilter()
     }
 
-    private fun onReadyGPUImageFilter(gpuimage: GPUImageFilter?) {
-        gpuimage?.let { gpuimage ->
-            gpuimage.init()
-            gpuimage.onDisplaySizeChanged(mSurfaceWidth, mSurfaceHeight)
-            gpuimage.onInputSizeChanged(mSurfaceWidth, mSurfaceHeight)
+    private fun onReadyGPUImageFilter(gpuImageFilter: GPUImageFilter?) {
+        gpuImageFilter?.let { filter ->
+            filter.init()
+            filter.onDisplaySizeChanged(mSurfaceWidth, mSurfaceHeight)
+            filter.onInputSizeChanged(mSurfaceWidth, mSurfaceHeight)
         }
 
     }
@@ -183,18 +185,19 @@ public class AVRecordRenderer(context: Context?) :
         //绘制过滤器，用于视频美化或者其它处理
         if (mFilters.size > 0) {
             try {
-                if (mFilters.get(mDrawFilterIndex) is CameraFilter)
-                    (mFilters.get(mDrawFilterIndex) as CameraFilter).setMatrix(mMtx)
+                if (mFilters[mDrawFilterIndex] is CameraFilter)
+                    (mFilters[mDrawFilterIndex] as CameraFilter).setMatrix(mMtx)
 
                 //这里的纹理需要进行录制
-                var showScreenTexture = onDrawFrameFilter(mFilters.get(mDrawFilterIndex)?.onDrawFrame(mTextureId[0]))
+                val showScreenTexture =
+                    onDrawFrameFilter(mFilters[mDrawFilterIndex].onDrawFrame(mTextureId[0]))
 
 
                 mListener?.onRecordTextureId(showScreenTexture, nanoTime)
 
 
             } catch (err: Exception) {
-                LogHelper.e(TAG, err?.message)
+                LogHelper.e(TAG, err.message)
             }
         }
 
@@ -210,7 +213,7 @@ public class AVRecordRenderer(context: Context?) :
             mDrawFilterIndex = 0
             return textureId
         }
-        val filter = mFilters.get(++mDrawFilterIndex)
+        val filter = mFilters[++mDrawFilterIndex]
 
         var gpuTextID = textureId
 
@@ -219,7 +222,7 @@ public class AVRecordRenderer(context: Context?) :
         if (filter is WatermarkFilter && mGPUImageFilter != null)
             gpuTextID = mGPUImageFilter?.onDrawFrame(gpuTextID)!!
 
-        return onDrawFrameFilter(filter?.onDrawFrame(gpuTextID))
+        return onDrawFrameFilter(filter.onDrawFrame(gpuTextID))
 
     }
 
@@ -230,7 +233,7 @@ public class AVRecordRenderer(context: Context?) :
      */
     fun onSurfaceDestroyed() {
         for (filter in mFilters)
-            filter?.release()
+            filter.release()
         mFilters.clear()
         mAddFilters.clear()
     }
@@ -257,7 +260,7 @@ public class AVRecordRenderer(context: Context?) :
      * 内部包含已有的滤镜
      */
     fun setGPUImageFilter(type: AVFilterType?): GPUImageFilter? {
-        gpuDestory()
+        gpuDestroy()
         mGPUImageFilter = mContext?.let { context -> AVFilterFactory.getFilters(context, type) }
         //3、初始化 GPUImageFilter
         onReadyGPUImageFilter(mGPUImageFilter)
@@ -269,7 +272,7 @@ public class AVRecordRenderer(context: Context?) :
     }
 
 
-    private fun gpuDestory() {
+    private fun gpuDestroy() {
         mGPUImageFilter?.destroy()
         mGPUImageFilter = null
     }
@@ -279,7 +282,7 @@ public class AVRecordRenderer(context: Context?) :
      */
     @Synchronized
     fun <gpuImageFilter : GPUImageFilter> setGPUImageFilter(filter: gpuImageFilter) {
-        gpuDestory()
+        gpuDestroy()
         mGPUImageFilter = filter
         //3、初始化 GPUImageFilter
         onReadyGPUImageFilter(mGPUImageFilter)
@@ -293,7 +296,7 @@ public class AVRecordRenderer(context: Context?) :
     }
 
 
-    public interface OnRendererListener {
+    interface OnRendererListener {
         fun onSurfaceCreated(textureId: Int, eglContext: EGLContext)
         fun onSurfaceChanged(gl: GL10?, width: Int, height: Int)
         fun onDrawFrame(mMtx: FloatArray)
@@ -303,12 +306,12 @@ public class AVRecordRenderer(context: Context?) :
     /**
      * 设置渲染监听
      */
-    public fun setOnRendererListener(listener: OnRendererListener) {
+    fun setOnRendererListener(listener: OnRendererListener) {
         mListener = listener
     }
 
 
-    var isStart = false;
+    var isStart = false
     fun startRecord() {
         frameIndex = 0
         isStart = true
@@ -321,14 +324,14 @@ public class AVRecordRenderer(context: Context?) :
         pts = -1
     }
 
-    var frameIndex = 0L;
+    var frameIndex = 0L
 //    private fun getCurFramePts(): Long {
 //        var pts = frameIndex * (1000 / 25) * 1000
 //        return pts.toLong()
 //    }
 
 
-    var pts = -1L;
+    var pts = -1L
     private fun getCurFramePts(): Long {
         if (pts == -1L)
             pts = System.nanoTime()

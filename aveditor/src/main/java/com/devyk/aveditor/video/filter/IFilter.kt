@@ -11,7 +11,7 @@ import java.nio.FloatBuffer
  *     desc    : This is IFilter
  * </pre>
  */
-public interface IFilter {
+interface IFilter {
 
     /**
      * 准备工作
@@ -21,7 +21,7 @@ public interface IFilter {
     /**
      * 根据传递进来的纹理 ID 进行加工绘制
      */
-    fun onDrawFrame(textureId: Int):Int
+    fun onDrawFrame(textureId: Int): Int
 
     /**
      * 销毁执行程序

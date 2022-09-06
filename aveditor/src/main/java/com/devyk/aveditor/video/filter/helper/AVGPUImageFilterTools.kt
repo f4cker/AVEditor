@@ -11,10 +11,10 @@ import com.devyk.aveditor.video.filter.magic.AVToolsBeautyFilter
  *     blog    : https://juejin.im/user/578259398ac2470061f3a3fb/posts
  *     github  : https://github.com/yangkun19921001
  *     mailbox : yang1001yk@gmail.com
- *     desc    : This is AVGPUImageFliterTools
+ *     desc    : This is AVGPUImageFilterTools
  * </pre>
  */
-public object AVGPUImageFliterTools {
+object AVGPUImageFilterTools {
 
     class FilterAdjuster(filter: GPUImageFilter) {
         private val adjuster: Adjuster<out GPUImageFilter>?
@@ -71,7 +71,7 @@ public object AVGPUImageFliterTools {
             adjuster?.adjust(percentage)
         }
 
-        public abstract inner class Adjuster<T : GPUImageFilter>(protected val filter: T) {
+        abstract inner class Adjuster<T : GPUImageFilter>(protected val filter: T) {
 
             abstract fun adjust(percentage: Int)
 
@@ -167,7 +167,7 @@ public object AVGPUImageFliterTools {
         private inner class PosterizeAdjuster(filter: GPUImagePosterizeFilter) :
             Adjuster<GPUImagePosterizeFilter>(filter) {
             override fun adjust(percentage: Int) {
-                // In theorie to 256, but only first 50 are interesting
+                // In theory to 256, but only first 50 are interesting
                 filter.setColorLevels(range(percentage, 1, 50))
             }
         }

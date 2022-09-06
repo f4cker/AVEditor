@@ -64,7 +64,7 @@ object OpenGLUtils {
     fun readRawTextFile(context: Context?, rawId: Int): String {
         val `is` = context?.resources?.openRawResource(rawId)
         val br = BufferedReader(InputStreamReader(`is`))
-        var line: String
+        var line: String?
         val sb = StringBuilder()
         try {
             while (true) {
@@ -91,7 +91,7 @@ object OpenGLUtils {
         /**
          * 顶点着色器
          */
-        var vShader = loadShader(vSource, GLES20.GL_VERTEX_SHADER)
+        val vShader = loadShader(vSource, GLES20.GL_VERTEX_SHADER)
 //        val vShader = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER)
 //        //加载着色器代码
 //        GLES20.glShaderSource(vShader, vSource)
@@ -110,7 +110,7 @@ object OpenGLUtils {
          * 片元着色器
          * 流程和上面一样
          */
-        var fShader = loadShader(fSource, GLES20.GL_FRAGMENT_SHADER)
+        val fShader = loadShader(fSource, GLES20.GL_FRAGMENT_SHADER)
 //        val fShader = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER)
 //        //加载着色器代码
 //        GLES20.glShaderSource(fShader, fSource)

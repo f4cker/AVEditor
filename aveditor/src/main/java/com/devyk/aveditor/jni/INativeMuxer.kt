@@ -1,7 +1,5 @@
 package com.devyk.aveditor.jni
 
-import com.devyk.aveditor.stream.packer.PackerType
-
 /**
  * <pre>
  *     author  : devyk on 2020-08-20 17:32
@@ -12,7 +10,7 @@ import com.devyk.aveditor.stream.packer.PackerType
  * </pre>
  */
 
-public interface INativeMuxer {
+interface INativeMuxer {
 
 //    const char *outPath, const char *outFormat = MP4,
 //    int video_width, int video_height,
@@ -38,14 +36,14 @@ public interface INativeMuxer {
         audioSampleRate: Int,
         audioChannels: Int,
         audioBitRate: Int
-    );
+    )
 
     /**
-     * @param 送入队列的数据
+     * @param byteArray 送入队列的数据
      * @param isAudio 是否是音频数据
      * @param pts 时间戳
      */
-    fun enqueue(byteArray: ByteArray?, isAudio: Boolean = false, pts: Long);
+    fun enqueue(byteArray: ByteArray?, isAudio: Boolean = false, pts: Long)
 
     /**
      * 关闭复用器

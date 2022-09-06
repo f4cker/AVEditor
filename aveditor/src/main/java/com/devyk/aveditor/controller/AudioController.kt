@@ -12,12 +12,7 @@ import com.devyk.aveditor.entity.Speed
 import com.devyk.aveditor.jni.IMusicDecode
 import com.devyk.aveditor.jni.JNIManager
 import com.devyk.aveditor.mediacodec.AudioEncoder
-import com.devyk.aveditor.utils.FileUtils
 import com.devyk.aveditor.utils.LogHelper
-import com.devyk.aveditor.utils.LogHelper.TAG
-import com.devyk.aveditor.utils.ThreadUtils
-import java.io.FileOutputStream
-
 import java.nio.ByteBuffer
 import java.util.*
 
@@ -31,8 +26,8 @@ import java.util.*
  *     desc    : This is AudioController 音频采集和音频编码的控制
  * </pre>
  */
-
-public class AudioController(audioConfiguration: AudioConfiguration) : IController, AudioProcessor.OnRecordListener,
+class AudioController(audioConfiguration: AudioConfiguration) : IController,
+    AudioProcessor.OnRecordListener,
     OnAudioEncodeListener, IMusicDecode.OnDecodeListener {
 
 
@@ -44,17 +39,17 @@ public class AudioController(audioConfiguration: AudioConfiguration) : IControll
     /**
      * 音频编解码用到的实体程序
      */
-    private lateinit var mAudioEncoder: AudioEncoder
+    private var mAudioEncoder: AudioEncoder
 
     /**
      * 音频采集用到的实体程序
      */
-    private lateinit var mAudioProcessor: AudioProcessor
+    private var mAudioProcessor: AudioProcessor
 
     /**
      * 从一个 Mp4,MP3 等文件中解码拿到 PCM 数据
      */
-    private lateinit var mAudioDecode: IAudioDecode
+    private var mAudioDecode: IAudioDecode
 
 
     /**
@@ -143,18 +138,18 @@ public class AudioController(audioConfiguration: AudioConfiguration) : IControll
     /**
      * 当采集 PCM 数据的时候返回
      */
-    override fun onPcmData(pcmData: ByteArray) {
+    override fun onPcmData(byteArray: ByteArray) {
         if (mSpeed == Speed.NORMAL) {
-            mAudioEncoder?.enqueueCodec(pcmData)
+            mAudioEncoder.enqueueCodec(byteArray)
             return
         }
-        Arrays.fill(mSpeedPcmData, 0)
-        JNIManager.getAVSpeedEngine()?.putData(0, pcmData, pcmData.size)
+        mSpeedPcmData?.let { Arrays.fill(it, 0) }
+        JNIManager.getAVSpeedEngine()?.putData(0, byteArray, byteArray.size)
         while (true) {
-            val outSize = JNIManager.getAVSpeedEngine()?.getData(0, mSpeedPcmData!!, pcmData.size)
+            val outSize = JNIManager.getAVSpeedEngine()?.getData(0, mSpeedPcmData!!, byteArray.size)
             if (outSize == 0)
                 break;
-            mAudioEncoder?.enqueueCodec(Arrays.copyOf(mSpeedPcmData, outSize!!))
+            mAudioEncoder.enqueueCodec(mSpeedPcmData?.copyOf(outSize!!))
         }
     }
 
@@ -164,7 +159,7 @@ public class AudioController(audioConfiguration: AudioConfiguration) : IControll
     override fun onStart(sampleRate: Int, channels: Int, sampleFormat: Int) {
         mSpeedPcmData = ShortArray(sampleRate * channels * 2)
         JNIManager.getAVSpeedEngine()?.initSpeedController(0, channels, sampleRate, mSpeed.value, 1.0)
-        mAudioEncoder?.start(mSpeed)
+        mAudioEncoder.start(mSpeed)
     }
 
     /**
@@ -172,14 +167,14 @@ public class AudioController(audioConfiguration: AudioConfiguration) : IControll
      */
     override fun setMute(isMute: Boolean) {
         super.setMute(isMute)
-        mAudioProcessor?.setMute(isMute)
+        mAudioProcessor.setMute(isMute)
 
 
     }
 
     override fun onStop() {
         super.onStop()
-        mAudioEncoder?.stop()
+        mAudioEncoder.stop()
     }
 
     /**
@@ -199,7 +194,7 @@ public class AudioController(audioConfiguration: AudioConfiguration) : IControll
     /**
      * 编码的输出格式
      */
-    override fun onAudioOutformat(outputFormat: MediaFormat?) {
+    override fun onAudioOutFormat(outputFormat: MediaFormat?) {
         mAudioDataListener?.onAudioOutformat(outputFormat)
     }
 
@@ -218,7 +213,7 @@ public class AudioController(audioConfiguration: AudioConfiguration) : IControll
         JNIManager.getAVSpeedEngine()?.initSpeedController(0, channels, sampleRate, mSpeed.value, 1.0)
         val build = AudioConfiguration.Builder().setChannelCount(channels).setFrequency(sampleRate).build()
         mAudioEncoder.setAudioConfiguration(build)
-        mAudioEncoder?.start(mSpeed)
+        mAudioEncoder.start(mSpeed)
     }
 
     /**

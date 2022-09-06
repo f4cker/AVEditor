@@ -11,10 +11,8 @@ import com.devyk.aveditor.muxer.JavaMp4Muxer
  *     desc    : This is AVJavaMuxerEngine
  * </pre>
  */
-public class AVJavaMuxerEngine : IJavaMuxer {
-
-
-    public override fun javaMergeVideo(inPath: ArrayList<String>, outPath: String) {
+class AVJavaMuxerEngine : IJavaMuxer {
+    override fun javaMergeVideo(inPath: ArrayList<String>, outPath: String) {
         val javaMp4Muxer = JavaMp4Muxer(inPath, outPath)
         javaMp4Muxer.merge()
     }

@@ -12,7 +12,7 @@ import com.devyk.aveditor.jni.JNIManager
  *     desc    : This is FFmpegAudioDecode 将外部传递进来的音乐文件进行解码
  * </pre>
  */
-public class FFmpegAudioDecode : IAudioDecode {
+class FFmpegAudioDecode : IAudioDecode {
 
     override fun addOnDecodeListener(listener: IMusicDecode.OnDecodeListener) {
         mMusicDecode?.addOnDecodeListener(listener)

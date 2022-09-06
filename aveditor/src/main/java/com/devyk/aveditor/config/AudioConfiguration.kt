@@ -1,6 +1,9 @@
 package com.devyk.aveditor.config
 
-import android.media.*
+import android.media.AudioFormat
+import android.media.MediaCodecInfo
+import android.media.MediaFormat
+import android.media.MediaRecorder
 
 /**
  * <pre>
@@ -42,18 +45,18 @@ class AudioConfiguration private constructor(builder: Builder) {
     }
 
     class Builder {
-        public var mediaCodec = DEFAULT_MEDIA_CODEC
-        public var minBps = DEFAULT_MIN_BPS
-        public var maxBps = DEFAULT_MAX_BPS
-        public var frequency = DEFAULT_FREQUENCY
-        public var encoding = DEFAULT_AUDIO_ENCODING
-        public var channelCount = DEFAULT_CHANNEL_COUNT
-        public var adts = DEFAULT_ADTS
-        public var mime = DEFAULT_MIME
-        public var codeType = DEFAULT_CODE_TYPE
-        public var aacProfile = DEFAULT_AAC_PROFILE
-        public var aec = DEFAULT_AEC
-        public var audioSource = DEFAULT_AUDIO_SOURCE
+        var mediaCodec = DEFAULT_MEDIA_CODEC
+        var minBps = DEFAULT_MIN_BPS
+        var maxBps = DEFAULT_MAX_BPS
+        var frequency = DEFAULT_FREQUENCY
+        var encoding = DEFAULT_AUDIO_ENCODING
+        var channelCount = DEFAULT_CHANNEL_COUNT
+        var adts = DEFAULT_ADTS
+        var mime = DEFAULT_MIME
+        var codeType = DEFAULT_CODE_TYPE
+        var aacProfile = DEFAULT_AAC_PROFILE
+        var aec = DEFAULT_AEC
+        var audioSource = DEFAULT_AUDIO_SOURCE
 
         fun setBps(minBps: Int, maxBps: Int): Builder {
             this.minBps = minBps
@@ -96,8 +99,8 @@ class AudioConfiguration private constructor(builder: Builder) {
             return this
         }
 
-        fun setMediaCodec(meidaCodec: Boolean): AudioConfiguration.Builder {
-            this.mediaCodec = meidaCodec
+        fun setMediaCodec(mediaCodec: Boolean): AudioConfiguration.Builder {
+            this.mediaCodec = mediaCodec
             return this
         }
 
@@ -106,7 +109,7 @@ class AudioConfiguration private constructor(builder: Builder) {
             return this
         }
 
-        fun setAudioSource(source:Int):Builder{
+        fun setAudioSource(source: Int): Builder {
             this.audioSource = source
             return this
         }
@@ -117,18 +120,18 @@ class AudioConfiguration private constructor(builder: Builder) {
     }
 
     companion object {
-        val DEFAULT_FREQUENCY = 44100
-        val DEFAULT_MAX_BPS = 64
-        val DEFAULT_MIN_BPS = 32
-        val DEFAULT_ADTS = 0
+        const val DEFAULT_FREQUENCY = 44100
+        const val DEFAULT_MAX_BPS = 64
+        const val DEFAULT_MIN_BPS = 32
+        const val DEFAULT_ADTS = 0
         val DEFAULT_CODE_TYPE = CodeType.ENCODE
-        val DEFAULT_MIME = MediaFormat.MIMETYPE_AUDIO_AAC
-        val DEFAULT_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
-        val DEFAULT_AAC_PROFILE = MediaCodecInfo.CodecProfileLevel.AACObjectLC
-        val DEFAULT_CHANNEL_COUNT = 1
-        val DEFAULT_AEC = false
-        val DEFAULT_AUDIO_SOURCE = MediaRecorder.AudioSource.MIC
-        val DEFAULT_MEDIA_CODEC = true
+        const val DEFAULT_MIME = MediaFormat.MIMETYPE_AUDIO_AAC
+        const val DEFAULT_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
+        const val DEFAULT_AAC_PROFILE = MediaCodecInfo.CodecProfileLevel.AACObjectLC
+        const val DEFAULT_CHANNEL_COUNT = 1
+        const val DEFAULT_AEC = false
+        const val DEFAULT_AUDIO_SOURCE = MediaRecorder.AudioSource.MIC
+        const val DEFAULT_MEDIA_CODEC = true
 
         fun createDefault(): AudioConfiguration {
             return Builder().build()
@@ -136,7 +139,7 @@ class AudioConfiguration private constructor(builder: Builder) {
     }
 
 
-    public enum class CodeType(codeType: Int) {
+    enum class CodeType(codeType: Int) {
         ENCODE(1),
         DECODE(2),
     }

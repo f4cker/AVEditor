@@ -1,11 +1,11 @@
 package com.devyk.aveditor.audio
 
 
-import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.audio.AudioUtils.AUDIO_CHANNEL_CONFIG
-import com.devyk.aveditor.audio.AudioUtils.AUDIO_FROMAT
+import com.devyk.aveditor.audio.AudioUtils.AUDIO_FORMAT
 import com.devyk.aveditor.audio.AudioUtils.SAMPLE_RATE_IN_HZ
 import com.devyk.aveditor.audio.AudioUtils.getBufferSize
+import com.devyk.aveditor.utils.LogHelper
 import java.util.*
 
 /**
@@ -17,7 +17,7 @@ import java.util.*
  *     desc    : This is AudioProcessor
  * </pre>
  */
-public class AudioProcessor : ThreadImpl() {
+class AudioProcessor : ThreadImpl() {
     /**
      * 读取大小
      */
@@ -46,7 +46,7 @@ public class AudioProcessor : ThreadImpl() {
         audioSource: Int = AudioUtils.AUDIO_SOURCE,
         sampleRateInHz: Int = AudioUtils.SAMPLE_RATE_IN_HZ,
         channelConfig: Int = AudioUtils.AUDIO_CHANNEL_CONFIG,
-        audioFormat: Int = AudioUtils.AUDIO_FROMAT
+        audioFormat: Int = AudioUtils.AUDIO_FORMAT
     ) {
         try {
             if (AudioUtils.initAudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat)) {
@@ -103,7 +103,7 @@ public class AudioProcessor : ThreadImpl() {
      */
     public fun main() {
         var data = ByteArray(mReadSize);
-        while (isRuning()) {
+        while (isRunning()) {
             val name = Thread.currentThread().name
             synchronized(mLock) {
                 if (isPause()) {
@@ -130,7 +130,7 @@ public class AudioProcessor : ThreadImpl() {
         fun onStart(
             sampleRate: Int = SAMPLE_RATE_IN_HZ,
             channels: Int = AUDIO_CHANNEL_CONFIG,
-            sampleFormat: Int = AUDIO_FROMAT
+            sampleFormat: Int = AUDIO_FORMAT
         )
         fun onError(meg: String?)
         fun onPcmData(byteArray: ByteArray);

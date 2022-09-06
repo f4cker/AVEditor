@@ -31,12 +31,12 @@ object TextureRotationUtil {
         flipVertical: Boolean
     ): FloatArray {
         var rotatedTex: FloatArray
-        when (rotation) {
-            Rotation.ROTATION_90 -> rotatedTex = TEXTURE_ROTATED_90
-            Rotation.ROTATION_180 -> rotatedTex = TEXTURE_ROTATED_180
-            Rotation.ROTATION_270 -> rotatedTex = TEXTURE_ROTATED_270
-            Rotation.NORMAL -> rotatedTex = TEXTURE_NO_ROTATION
-            else -> rotatedTex = TEXTURE_NO_ROTATION
+        rotatedTex = when (rotation) {
+            Rotation.ROTATION_90 -> TEXTURE_ROTATED_90
+            Rotation.ROTATION_180 -> TEXTURE_ROTATED_180
+            Rotation.ROTATION_270 -> TEXTURE_ROTATED_270
+            Rotation.NORMAL -> TEXTURE_NO_ROTATION
+            else -> TEXTURE_NO_ROTATION
         }
         if (flipHorizontal) {
             rotatedTex = floatArrayOf(

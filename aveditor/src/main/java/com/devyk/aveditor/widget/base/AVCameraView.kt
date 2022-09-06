@@ -5,7 +5,6 @@ import android.graphics.SurfaceTexture
 import android.opengl.EGLContext
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import android.view.SurfaceHolder
 import com.devyk.aveditor.callback.ICameraOpenListener
 import com.devyk.aveditor.callback.OnSelectFilterListener
 import com.devyk.aveditor.config.CameraConfiguration
@@ -27,7 +26,7 @@ import javax.microedition.khronos.opengles.GL10
  *     desc    : This is AVCameraView 相机处理 View
  * </pre>
  */
-public open class AVCameraView : GLSurfaceView,
+open class AVCameraView : GLSurfaceView,
     AVRecordRenderer.OnRendererListener,
     SurfaceTexture.OnFrameAvailableListener {
 
@@ -62,7 +61,7 @@ public open class AVCameraView : GLSurfaceView,
     /**
      * Camera 纹理
      */
-    public var mSurfaceTextureView: SurfaceTexture? = null
+    var mSurfaceTextureView: SurfaceTexture? = null
 
 
     constructor(context: Context?) : this(context, null)
@@ -86,7 +85,8 @@ public open class AVCameraView : GLSurfaceView,
     }
 
 
-    var frameIndex = 0;
+    var frameIndex = 0
+
     /**
      * Camera 刷新回调
      */
@@ -94,7 +94,7 @@ public open class AVCameraView : GLSurfaceView,
         /**
          * 由于 咱们初始化传递的是 RENDER_MODE_WHEN_DIRTY 手动渲染模式，当 Camera 有新的数据，我们就应该请求刷新
          */
-            requestRender()
+        requestRender()
     }
 
     /**
@@ -102,7 +102,7 @@ public open class AVCameraView : GLSurfaceView,
      * @see AVRecordRenderer.OnRendererListener
      *
      */
-    override open fun onSurfaceCreated(textureId: Int, eglContext: EGLContext) {
+    override fun onSurfaceCreated(textureId: Int, eglContext: EGLContext) {
         mEGLContext = eglContext
         mTextureId = textureId
     }
@@ -130,16 +130,9 @@ public open class AVCameraView : GLSurfaceView,
     }
 
     /**
-     * 由于在 GLSurfaceView 内部没有回调可以判断该控件是否销毁了，固在当前重写  surfaceDestroyed ，将销毁生命周期传递下去
-     */
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        super.surfaceDestroyed(holder)
-    }
-
-    /**
      * 开始预览
      */
-    public fun startPreview() {
+    fun startPreview() {
         // Camera 预览配置
         mCameraConfiguration = CameraConfiguration.Builder()
             .setFacing(if (mBack) CameraConfiguration.Facing.BACK else CameraConfiguration.Facing.FRONT)
@@ -150,14 +143,14 @@ public open class AVCameraView : GLSurfaceView,
         CameraHolder.instance().setConfiguration(mCameraConfiguration)
         CameraHolder.instance().openCamera()
         mSurfaceTextureView = SurfaceTexture(mTextureId)
-        CameraHolder.instance().setSurfaceTexture(mSurfaceTextureView!!, this);
-        CameraHolder.instance().startPreview();
+        CameraHolder.instance().setSurfaceTexture(mSurfaceTextureView!!, this)
+        CameraHolder.instance().startPreview()
     }
 
     /**
      * 释放 Camera 资源的时候调用
      */
-    public open fun stopPreview() {
+    open fun stopPreview() {
         mRenderer.onSurfaceDestroyed()
         CameraHolder.instance().stopPreview()
         CameraHolder.instance().releaseCamera()
@@ -172,7 +165,7 @@ public open class AVCameraView : GLSurfaceView,
      * 切换相机
      */
     @Synchronized
-    public open fun switchCamera(): Boolean {
+    open fun switchCamera(): Boolean {
         return CameraHolder.instance().switchCamera()
     }
 
@@ -206,7 +199,7 @@ public open class AVCameraView : GLSurfaceView,
     /**
      * 添加水印
      */
-    public fun addWatermark(watermark: Watermark?) {
+    fun addWatermark(watermark: Watermark?) {
         mRenderer.addWatermark(watermark)
     }
 

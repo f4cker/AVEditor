@@ -10,6 +10,7 @@ import com.devyk.aveditor.config.CameraConfiguration
 import com.devyk.aveditor.video.camera.exception.CameraDisabledException
 import com.devyk.aveditor.video.camera.exception.CameraNotSupportException
 import com.devyk.aveditor.video.camera.exception.NoCameraException
+import kotlin.math.abs
 
 
 /**
@@ -124,7 +125,7 @@ public object CameraUtils {
     fun setPreviewFormat(camera: Camera, parameters: Camera.Parameters) {
         //设置预览回调的图片格式
         try {
-            val supportedPreviewFormats = parameters.getSupportedPreviewFormats()
+            val supportedPreviewFormats = parameters.supportedPreviewFormats
             if (supportedPreviewFormats.contains(ImageFormat.NV21))
                 parameters.previewFormat = ImageFormat.NV21
             else
@@ -140,20 +141,20 @@ public object CameraUtils {
      * 设置帧率
      */
     fun setPreviewFps(camera: Camera, fps: Int, parameters: Camera.Parameters) {
-        var fps = fps
+        var tempFps = fps
         //设置摄像头预览帧率
         if (BlackListHelper.deviceInFpsBlacklisted()) {
             Log.d(TAG, "Device in fps setting black list, so set the camera fps 15")
-            fps = 15
+            tempFps = 15
         }
         try {
-            parameters.previewFrameRate = fps
+            parameters.previewFrameRate = tempFps
             camera.parameters = parameters
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        val range = adaptPreviewFps(fps, parameters.supportedPreviewFpsRange)
+        val range = adaptPreviewFps(tempFps, parameters.supportedPreviewFpsRange)
 
         try {
             parameters.setPreviewFpsRange(range[0], range[1])
@@ -165,13 +166,14 @@ public object CameraUtils {
     }
 
     private fun adaptPreviewFps(expectedFps: Int, fpsRanges: List<IntArray>): IntArray {
-        var expectedFps = expectedFps
-        expectedFps *= 1000
+        var tempExpectedFps = expectedFps
+        tempExpectedFps *= 1000
         var closestRange = fpsRanges[0]
-        var measure = Math.abs(closestRange[0] - expectedFps) + Math.abs(closestRange[1] - expectedFps)
+        var measure =
+            abs(closestRange[0] - tempExpectedFps) + abs(closestRange[1] - tempExpectedFps)
         for (range in fpsRanges) {
-            if (range[0] <= expectedFps && range[1] >= expectedFps) {
-                val curMeasure = Math.abs(range[0] - expectedFps) + Math.abs(range[1] - expectedFps)
+            if (range[0] <= tempExpectedFps && range[1] >= tempExpectedFps) {
+                val curMeasure = abs(range[0] - tempExpectedFps) + abs(range[1] - tempExpectedFps)
                 if (curMeasure < measure) {
                     closestRange = range
                     measure = curMeasure
@@ -213,7 +215,7 @@ public object CameraUtils {
 
         var orientation = getDisplayOrientation(cameraData.cameraID)
         if (isLandscape) {
-            orientation = orientation - 90
+            orientation -= 90
         }
 //        camera.setDisplayOrientation(orientation)
     }
@@ -298,16 +300,16 @@ public object CameraUtils {
         val sizes = camera.parameters.supportedPreviewSizes ?: return null
         //找到宽度差距最小的
         for (size in sizes) {
-            if (Math.abs(size.width - width) < minWidthDiff) {
-                minWidthDiff = Math.abs(size.width - width).toDouble()
+            if (abs(size.width - width) < minWidthDiff) {
+                minWidthDiff = abs(size.width - width).toDouble()
             }
         }
         //在宽度差距最小的里面，找到高度差距最小的
         for (size in sizes) {
-            if (Math.abs(size.width - width).toDouble() == minWidthDiff) {
-                if (Math.abs(size.height - height) < minHeightDiff) {
+            if (abs(size.width - width).toDouble() == minWidthDiff) {
+                if (abs(size.height - height) < minHeightDiff) {
                     optimalSize = size
-                    minHeightDiff = Math.abs(size.height - height).toDouble()
+                    minHeightDiff = abs(size.height - height).toDouble()
                 }
             }
         }
@@ -342,8 +344,8 @@ public object CameraUtils {
         if (dpm.getCameraDisabled(null)) {
             throw CameraDisabledException()
         }
-        val cameraDatas = getAllCamerasData(false)
-        if (cameraDatas?.size == 0) {
+        val cameraData = getAllCamerasData(false)
+        if (cameraData?.size == 0) {
             throw NoCameraException()
         }
     }

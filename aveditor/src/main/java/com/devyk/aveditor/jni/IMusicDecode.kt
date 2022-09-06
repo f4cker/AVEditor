@@ -9,55 +9,55 @@ package com.devyk.aveditor.jni
  *     desc    : This is IMusicDecode
  * </pre>
  */
-public interface IMusicDecode {
+interface IMusicDecode {
     /**
      * C++ 实现
      * 初始化解码器
      */
-    public fun addRecordMusic(musicPath: String?)
+    fun addRecordMusic(musicPath: String?)
 
     /**
      * C++ 实现
      * 开始解码
      */
-    public fun start()
+    fun start()
 
     /**
      * C++ 实现
      * 暂停解码
      */
-    public fun pause()
+    fun pause()
 
     /**
      * 恢复解码
      */
-    public fun resume()
+    fun resume()
 
 
-    public interface OnDecodeListener {
+    interface OnDecodeListener {
 
         /**
          * 开始解码
          */
-        public fun onDecodeStart(sampleRate: Int, channels: Int, sampleFormat: Int)
+        fun onDecodeStart(sampleRate: Int, channels: Int, sampleFormat: Int)
 
         /**
          * 回调编码完成的 PCM 数据
          */
-        public fun onDecodeData(data: ByteArray)
+        fun onDecodeData(data: ByteArray)
 
         /**
          * 解码完成
          */
-        public fun onDecodeStop()
+        fun onDecodeStop()
 
     }
 
-    public fun addOnDecodeListener(listener: OnDecodeListener)
+    fun addOnDecodeListener(listener: OnDecodeListener)
 
     /**
      * C++ 实现
      * 停止解码
      */
-    public fun stop()
+    fun stop()
 }

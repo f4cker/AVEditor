@@ -16,11 +16,11 @@ import java.nio.ByteBuffer
  *     desc    : This is H264Encoder
  * </pre>
  */
-public open class VideoEncoder : BaseVideoEncoder() {
+open class VideoEncoder : BaseVideoEncoder() {
 
 
-    override fun onVideoOutformat(outputFormat: MediaFormat?) {
-        mListener?.onVideoOutformat(outputFormat)
+    override fun onVideoOutFormat(outputFormat: MediaFormat?) {
+        mListener?.onVideoOutFormat(outputFormat)
     }
 
     override fun prepare(videoConfiguration: VideoConfiguration) {

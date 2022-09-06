@@ -13,12 +13,12 @@ package com.devyk.aveditor.utils
 object TimeUtil {
 
     fun format(time: Long): String {
-        var time = time
+        var tempTime = time
         var str = ""
-        time = time / 1000
-        val s = (time % 60).toInt()
-        val m = (time / 60 % 60).toInt()
-        val h = (time / 3600).toInt()
+        tempTime /= 1000
+        val s = (tempTime % 60).toInt()
+        val m = (tempTime / 60 % 60).toInt()
+        val h = (tempTime / 3600).toInt()
         if (h > 0) {
             str += "$h:"
         }

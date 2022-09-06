@@ -5,9 +5,10 @@ import android.media.MediaCodec.CONFIGURE_FLAG_ENCODE
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.util.Log
-import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.blacklist.BlackListHelper
 import com.devyk.aveditor.config.VideoConfiguration
+import com.devyk.aveditor.utils.LogHelper
+import kotlin.math.ceil
 
 /**
  * <pre>
@@ -49,7 +50,7 @@ object VideoMediaCodec {
             try {
                 mediaCodec = MediaCodec.createEncoderByType(videoConfiguration.mime)
                 mediaCodec.configure(format, null, null, CONFIGURE_FLAG_ENCODE)
-                LogHelper.d(TAG, "mediacodec init successed!")
+                LogHelper.d(TAG, "mediacodec init succeed!")
             } catch (e: Exception) {
                 e.printStackTrace()
                 mediaCodec = release(mediaCodec)
@@ -87,7 +88,7 @@ object VideoMediaCodec {
     // We avoid the device-specific limitations on width and height by using values that
     // are multiples of 16, which all tested devices seem to be able to handle.
     fun getVideoSize(size: Int): Int {
-        val multiple = Math.ceil(size / 16.0).toInt()
+        val multiple = ceil(size / 16.0).toInt()
         return multiple * 16
     }
 

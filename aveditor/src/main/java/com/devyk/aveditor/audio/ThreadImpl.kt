@@ -12,18 +12,18 @@ import com.devyk.aveditor.utils.LogHelper
  *     desc    : This is ThreadImpl
  * </pre>
  */
-public open class ThreadImpl : IThread {
+open class ThreadImpl : IThread {
 
     private var isPause = false
 
-    private var isRuning = false
+    private var isRunning = false
 
     private var TAG = javaClass.simpleName
 
 
     override fun start(main: () -> Unit) {
-        if (isRuning())return
-        isRuning = true
+        if (isRunning()) return
+        isRunning = true
         isPause = false
         Thread {
             main()
@@ -35,7 +35,7 @@ public open class ThreadImpl : IThread {
      * 线程停止
      */
     override fun stop() {
-        isRuning = false
+        isRunning = false
         isPause = true
         LogHelper.d(TAG, "thread stop!")
     }
@@ -58,6 +58,6 @@ public open class ThreadImpl : IThread {
     /**
      * 是否执行
      */
-    override fun isRuning(): Boolean = isRuning
+    override fun isRunning(): Boolean = isRunning
 
 }

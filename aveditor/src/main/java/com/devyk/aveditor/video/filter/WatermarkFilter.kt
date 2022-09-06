@@ -23,8 +23,8 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
     private var mBitmap: Bitmap? = null
     private var mTextureId: IntArray? = null
     private var mWatermark: Watermark? = null
-    private var mWeaterX = 0
-    private var mWeaterY = 0
+    private var mWaterX = 0
+    private var mWaterY = 0
 
 
     override fun onReady(width: Int, height: Int) {
@@ -48,7 +48,7 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
         //设置显示窗口
         GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight)
 
-        //不调用的话就是默认的操作glsurfaceview中的纹理了。显示到屏幕上了
+        //不调用的话就是默认的操作 GLSurfaceView 中的纹理了。显示到屏幕上了
         //这里我们还只是把它画到fbo中(缓存)
         mFrameBuffers?.get(0)?.let { GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, it) }
 
@@ -56,11 +56,11 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
         GLES20.glUseProgram(mGLProgramId)
 
         //传递坐标
-        mGLVertexBuffer?.position(0)
+        mGLVertexBuffer.position(0)
         GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 0, mGLVertexBuffer)
         GLES20.glEnableVertexAttribArray(vPosition)
 
-        mGLTextureBuffer?.position(0)
+        mGLTextureBuffer.position(0)
         GLES20.glVertexAttribPointer(vCoord, 2, GLES20.GL_FLOAT, false, 0, mGLTextureBuffer)
         GLES20.glEnableVertexAttribArray(vCoord)
 
@@ -73,7 +73,7 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
         //TODO 删掉 不然录制视频抖动
-        //        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        // GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
         onDrawStick()
         //返回fbo的纹理id
@@ -87,18 +87,18 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
         GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         // 绘制水印
         mWatermark?.let { watermark ->
-            watermark.bitmap?.let { bitmap ->
-                mWeaterX = mSurfaceWidth - bitmap.width - 50
-                mWeaterY = mSurfaceHeight - bitmap.height - 100
+            watermark.bitmap.let { bitmap ->
+                mWaterX = mSurfaceWidth - bitmap.width - 50
+                mWaterY = mSurfaceHeight - bitmap.height - 100
 
                 if (watermark.x != 0.0f || watermark.y != 0.0f) {
-                    mWeaterX = watermark.x.toInt()
-                    mWeaterY = watermark.y.toInt()
+                    mWaterX = watermark.x.toInt()
+                    mWaterY = watermark.y.toInt()
                 }
 
                 //设置水印位置
                 GLES20.glViewport(
-                    mWeaterX, mWeaterY,
+                    mWaterX, mWaterY,
                     bitmap.width,
                     bitmap.height
                 )
@@ -111,11 +111,11 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
         //使用着色器
         GLES20.glUseProgram(mGLProgramId)
         //传递坐标
-        mGLVertexBuffer?.position(0)
+        mGLVertexBuffer.position(0)
         GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 0, mGLVertexBuffer)
         GLES20.glEnableVertexAttribArray(vPosition)
 
-        mGLTextureBuffer?.position(0)
+        mGLTextureBuffer.position(0)
         GLES20.glVertexAttribPointer(vCoord, 2, GLES20.GL_FLOAT, false, 0, mGLTextureBuffer)
         GLES20.glEnableVertexAttribArray(vCoord)
 
@@ -141,8 +141,8 @@ class WatermarkFilter(context: Context?) : BaseFBOFilter(context, R.raw.base_ver
     fun setWatermark(watermark: Watermark?) {
         this.mWatermark = watermark
         watermark?.let {
-            it.bitmap.let {
-                mBitmap = it
+            it.bitmap.let { bitmap ->
+                mBitmap = bitmap
             }
         }
 

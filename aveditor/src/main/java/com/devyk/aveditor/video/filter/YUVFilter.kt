@@ -146,12 +146,12 @@ class YUVFilter(context: Context?) : BaseFBOFilter(context, R.raw.yuv_vertex_sha
         //设置显示窗口
         GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight)
 
-        //不调用的话就是默认的操作glsurfaceview中的纹理了。显示到屏幕上了
+        //不调用的话就是默认的操作 GLSurfaceView 中的纹理了。显示到屏幕上了
         //这里我们还只是把它画到fbo中(缓存)
         mFrameBuffers?.get(0)?.let { GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, it) }
 
         //传递坐标
-        mGLVertexBuffer?.position(0)
+        mGLVertexBuffer.position(0)
         GLES20.glUseProgram(mGLProgramId)
         GLES20.glEnableVertexAttribArray(avPosition)
         GLES20.glVertexAttribPointer(
@@ -163,7 +163,7 @@ class YUVFilter(context: Context?) : BaseFBOFilter(context, R.raw.yuv_vertex_sha
             mGLVertexBuffer
         )
 
-        mGLTextureBuffer?.position(0)
+        mGLTextureBuffer.position(0)
         GLES20.glEnableVertexAttribArray(afPosition)
         GLES20.glVertexAttribPointer(
             afPosition,

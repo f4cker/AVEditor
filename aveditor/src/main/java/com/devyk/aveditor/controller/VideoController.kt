@@ -22,12 +22,17 @@ import java.nio.ByteBuffer
  * </pre>
  */
 
-public class VideoController(context: Context, textureId:Int, eglContext: EGLContext?, videoConfiguration: VideoConfiguration) : IController,
+class VideoController(
+    context: Context,
+    textureId: Int,
+    eglContext: EGLContext?,
+    videoConfiguration: VideoConfiguration
+) : IController,
     OnVideoEncodeListener {
 
     private var mCameraVideoController: CameraRecorder? = null
 
-    private var mListener : IController.OnVideoDataListener?=null
+    private var mListener: IController.OnVideoDataListener? = null
 
     init {
         mCameraVideoController = CameraRecorder(context, textureId, eglContext)
@@ -52,11 +57,11 @@ public class VideoController(context: Context, textureId:Int, eglContext: EGLCon
 
 
     override fun onVideoEncode(bb: ByteBuffer?, bi: MediaCodec.BufferInfo?) {
-        mListener?.onVideoData(bb,bi)
+        mListener?.onVideoData(bb, bi)
     }
 
-    override fun onVideoOutformat(outputFormat: MediaFormat?) {
-        mListener?.onVideoOutformat(outputFormat)
+    override fun onVideoOutFormat(outputFormat: MediaFormat?) {
+        mListener?.onVideoOutFormat(outputFormat)
     }
 
 

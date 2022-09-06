@@ -24,9 +24,9 @@ import javax.microedition.khronos.opengles.GL10
 class AVPlayView : GLSurfaceView, SurfaceHolder.Callback, GLSurfaceView.Renderer, Runnable {
 
 
-    private var isQueryPos = true;
+    private var isQueryPos = true
 
-    private var lister: OnProgressListener? = null;
+    private var lister: OnProgressListener? = null
 
     private var mIPlayer: IPlayer? = null
 
@@ -40,8 +40,7 @@ class AVPlayView : GLSurfaceView, SurfaceHolder.Callback, GLSurfaceView.Renderer
     var preTime = -1
 
 
-    constructor(context: Context?) : this(context, null) {
-    }
+    constructor(context: Context?) : this(context, null)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         setRenderer(this)
@@ -85,7 +84,7 @@ class AVPlayView : GLSurfaceView, SurfaceHolder.Callback, GLSurfaceView.Renderer
             if (progress != preTime)
                 lister?.onProgressChanged(progress)
             Thread.sleep(40)
-            preTime = progress;
+            preTime = progress
         }
     }
 
@@ -97,12 +96,12 @@ class AVPlayView : GLSurfaceView, SurfaceHolder.Callback, GLSurfaceView.Renderer
     /**
      * 设置播放源
      */
-    public fun setDataSource(source: String?) = mIPlayer?.setDataSource(source)
+    fun setDataSource(source: String?) = mIPlayer?.setDataSource(source)
 
     /**
      * 播放
      */
-    public fun start() {
+    fun start() {
         preTime - 1
         mIPlayer?.start()
     }
@@ -110,43 +109,43 @@ class AVPlayView : GLSurfaceView, SurfaceHolder.Callback, GLSurfaceView.Renderer
     /**
      * 播放进度
      */
-    public fun progress(): Double = mIPlayer?.progress()!!
+    fun progress(): Double = mIPlayer?.progress()!!
 
     /**
      * 暂停
      */
-    public fun setPause(status: Boolean) = mIPlayer?.setPause(status)
+    fun setPause(status: Boolean) = mIPlayer?.setPause(status)
 
     /**
      * 指定跳转到某个时间点播放
      */
-    public fun seekTo(seek: Double): Int? {
+    fun seekTo(seek: Double): Int? {
         ThreadUtils.runChildThread {
             mIPlayer?.seekTo(seek)
         }
-        return 0;
+        return 0
     }
 
     /**
      * 设置硬件解码播放
      */
-    public fun setMediaCodec(isMediaCodec: Boolean) =mIPlayer?.setMediaCodec(isMediaCodec)
+    fun setMediaCodec(isMediaCodec: Boolean) = mIPlayer?.setMediaCodec(isMediaCodec)
 
     /**
      * 停止
      */
-    public fun stop() {
+    fun stop() {
         mIPlayer?.stop()
     }
 
     /**
      * 播放进度监听
      */
-    public fun addProgressListener(progress: OnProgressListener) {
-        lister = progress;
+    fun addProgressListener(progress: OnProgressListener) {
+        lister = progress
     }
 
-    public interface OnProgressListener {
+    interface OnProgressListener {
         fun onProgressChanged(progress: Int)
     }
 

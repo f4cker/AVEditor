@@ -1,5 +1,6 @@
 package com.devyk.aveditor.mediacodec
 
+
 import android.annotation.TargetApi
 import android.media.MediaCodec
 import android.media.MediaFormat
@@ -8,12 +9,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.view.Surface
-import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.config.VideoConfiguration
 import com.devyk.aveditor.entity.Speed
-import com.tencent.mars.xlog.Log
-
-
+import com.devyk.aveditor.utils.LogHelper
 import java.util.concurrent.locks.ReentrantLock
 
 
@@ -29,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock
  *     @see https://www.cnblogs.com/tinywan/p/6402007.html H264编码profile & level控制
  * </pre>
  */
-public abstract class BaseVideoEncoder : IVideoCodec {
+abstract class BaseVideoEncoder : IVideoCodec {
 
     private var mMediaCodec: MediaCodec? = null
     protected var mPause: Boolean = false
@@ -37,11 +35,12 @@ public abstract class BaseVideoEncoder : IVideoCodec {
     protected var mEncoderHandler: Handler? = null
     protected var mConfiguration = VideoConfiguration.createDefault()
     private var mBufferInfo = MediaCodec.BufferInfo()
+
     @Volatile
     private var isStarted: Boolean = false
     private val encodeLock = ReentrantLock()
     private lateinit var mSurface: Surface
-    public val TAG = this.javaClass.simpleName
+    val TAG = this.javaClass.simpleName
     private var mNewFormat: MediaFormat? = null
 
 
@@ -68,7 +67,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
      * 准备硬编码工作
      */
     override fun prepare(videoConfiguration: VideoConfiguration) {
-        videoConfiguration?.run {
+        videoConfiguration.run {
             mConfiguration = videoConfiguration
             mMediaCodec = VideoMediaCodec.getVideoMediaCodec(mConfiguration)
             LogHelper.e(TAG, "prepare success!")
@@ -78,7 +77,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
     /**
      * 渲染画面销毁了 open 子类可以重写
      */
-    protected open fun onSurfaceDestory(surface: Surface?) {
+    protected open fun onSurfaceDestroy(surface: Surface?) {
     }
 
     /**
@@ -107,7 +106,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
         mPts = 0
         mHandlerThread?.run {
             this.start()
-            mEncoderHandler = Handler(getLooper())
+            mEncoderHandler = Handler(looper)
 //            mBufferInfo = MediaCodec.BufferInfo()
             //必须在  mMediaCodec?.start() 之前
             mSurface = mMediaCodec!!.createInputSurface()
@@ -120,7 +119,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
     }
 
 
-    public fun loopEncode() {
+    fun loopEncode() {
         mEncoderHandler?.post(swapDataRunnable)
     }
 
@@ -153,7 +152,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
      * 释放编码器
      */
     private fun releaseEncoder() {
-        onSurfaceDestory(getSurface())
+        onSurfaceDestroy(getSurface())
         mMediaCodec?.stop()
         mMediaCodec?.release()
         mMediaCodec = null
@@ -178,7 +177,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
      * 解码函数
      */
     private fun drainEncoder() {
-        var outBuffers = mMediaCodec?.getOutputBuffers()
+        val outBuffers = mMediaCodec?.outputBuffers
         if (!isStarted) {
             // if not running anymore, complete stream
             mMediaCodec?.signalEndOfInputStream()
@@ -191,7 +190,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
 
 
                 if (outBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                    onVideoOutformat(mMediaCodec?.outputFormat)
+                    onVideoOutFormat(mMediaCodec?.outputFormat)
                 }
 
                 if (outBufferIndex!! < 0) {
@@ -200,7 +199,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
                     continue
                 }
 
-                val bb = outBuffers!![outBufferIndex!!]
+                val bb = outBuffers!![outBufferIndex]
 
 
                 if (mBufferInfo.size != 0) {
@@ -209,10 +208,10 @@ public abstract class BaseVideoEncoder : IVideoCodec {
                     }
                     LogHelper.e(
                         TAG,
-                        "视频时间戳：${mBufferInfo!!.presentationTimeUs} ---> ${mBufferInfo!!.presentationTimeUs / 1000_000}"
+                        "视频时间戳：${mBufferInfo.presentationTimeUs} ---> ${mBufferInfo.presentationTimeUs / 1000_000}"
                     )
                     if (!mPause) {
-                        onVideoEncode(bb, mBufferInfo!!)
+                        onVideoEncode(bb, mBufferInfo)
                     }
                     mMediaCodec?.releaseOutputBuffer(outBufferIndex, false)
                 }
@@ -233,25 +232,25 @@ public abstract class BaseVideoEncoder : IVideoCodec {
     ts_freq : 选定的时间戳的采样频率
     fps : 视频帧率
      */
-    public fun drawEncode() {
+    fun drawEncode() {
         encodeLock.lock()
         //检查时间戳是否有误
         var detectTimeError = false
         //视频一帧的的时间戳
         val VIDEO_FRAME_TIME_US = (1000 * 1000f / mConfiguration.fps).toInt()
-        var outBuffers = mMediaCodec?.getOutputBuffers()
+        val outBuffers = mMediaCodec?.outputBuffers
         if (!isStarted) {
             // if not running anymore, complete stream
             mMediaCodec?.signalEndOfInputStream()
         }
 
         if (mMediaCodec != null) {
-            val outBufferIndex = mMediaCodec?.dequeueOutputBuffer(mBufferInfo!!, 12000)
+            val outBufferIndex = mMediaCodec?.dequeueOutputBuffer(mBufferInfo, 12000)
 
 
 
             if (outBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                onVideoOutformat(mMediaCodec?.outputFormat)
+                onVideoOutFormat(mMediaCodec?.outputFormat)
             }
 
             if (outBufferIndex!! < 0) {
@@ -260,7 +259,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
                 return
             }
 
-            val bb = outBuffers!![outBufferIndex!!]
+            val bb = outBuffers!![outBufferIndex]
 
             var pts = getPTSUs().toDouble()
             //视频变速处理
@@ -273,7 +272,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
             if ((mBufferInfo.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                 if (mBufferInfo.size != 0) {
                     if (!mPause) {
-                        onVideoEncode(bb, mBufferInfo!!)
+                        onVideoEncode(bb, mBufferInfo)
                     }
                     mBufferInfo.size = 0
                 }
@@ -291,7 +290,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
                     )
 
 
-                    onVideoEncode(bb, mBufferInfo!!)
+                    onVideoEncode(bb, mBufferInfo)
 
                     mFrameIndex++;
                 }
@@ -328,7 +327,7 @@ public abstract class BaseVideoEncoder : IVideoCodec {
     }
 
 
-    public fun isStart(): Boolean = isStarted
+    fun isStart(): Boolean = isStarted
 
     protected fun getPTSUs(): Long {
         if (mPts == 0L)
@@ -340,6 +339,6 @@ public abstract class BaseVideoEncoder : IVideoCodec {
     }
 
 
-    abstract fun onVideoOutformat(outputFormat: MediaFormat?)
+    abstract fun onVideoOutFormat(outputFormat: MediaFormat?)
 
 }

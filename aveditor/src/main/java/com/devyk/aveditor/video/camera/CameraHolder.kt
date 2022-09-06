@@ -8,9 +8,9 @@ import com.devyk.aveditor.config.CameraConfiguration
 import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.video.camera.exception.CameraHardwareException
 import com.devyk.aveditor.video.camera.exception.CameraNotSupportException
-
 import java.io.IOException
-import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * <pre>
@@ -179,13 +179,12 @@ public class CameraHolder {
             cameraDevice.setPreviewCallback(null)
             try {
                 cameraDevice.parameters?.let { parameters ->
-                    val cameraParameters = parameters
-                    if (cameraParameters != null && cameraParameters.flashMode != null
-                        && cameraParameters.flashMode != Camera.Parameters.FLASH_MODE_OFF
+                    if (parameters.flashMode != null
+                        && parameters.flashMode != Camera.Parameters.FLASH_MODE_OFF
                     ) {
-                        cameraParameters.flashMode = Camera.Parameters.FLASH_MODE_OFF
+                        parameters.flashMode = Camera.Parameters.FLASH_MODE_OFF
                     }
-                    cameraDevice.parameters = cameraParameters
+                    cameraDevice.parameters = parameters
                 }
             } catch (error: java.lang.Exception) {
                 LogHelper.e(TAG, error.message)
@@ -299,9 +298,9 @@ public class CameraHolder {
         }
         val params = mCameraDevice!!.parameters
         if (isBig) {
-            params.zoom = Math.min(params.zoom + 1, params.maxZoom)
+            params.zoom = min(params.zoom + 1, params.maxZoom)
         } else {
-            params.zoom = Math.max(params.zoom - 1, 0)
+            params.zoom = max(params.zoom - 1, 0)
         }
         mCameraDevice!!.parameters = params
         return params.zoom.toFloat() / params.maxZoom
@@ -346,12 +345,12 @@ public class CameraHolder {
         } else {
             cameraParameters.flashMode = Camera.Parameters.FLASH_MODE_OFF
         }
-        try {
+        return try {
             mCameraDevice!!.parameters = cameraParameters
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
 
     }
@@ -378,9 +377,9 @@ public class CameraHolder {
     }
 
     companion object {
-        private val TAG = "CameraHolder"
-        private val FOCUS_WIDTH = 80
-        private val FOCUS_HEIGHT = 80
+        const val TAG = "CameraHolder"
+        const val FOCUS_WIDTH = 80
+        const val FOCUS_HEIGHT = 80
 
         private var sHolder: CameraHolder? = null
 

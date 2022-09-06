@@ -57,67 +57,67 @@ object JNIManager {
         mAVEditor = AVEditorEngine()
         mAVMuxer = AVMuxerEngine()
         mAVJavaMuxer = AVJavaMuxerEngine()
-        mSpeedController = AVSpeedEngine();
+        mSpeedController = AVSpeedEngine()
     }
 
 
     /**
      * 动态替换播放拨快
      */
-    public fun <T : IPlayer> setPlayerEngine(t: T) {
+    fun <T : IPlayer> setPlayerEngine(t: T) {
         mPlayerEngine = t
     }
 
     /**
      * 动态替音频解码模块
      */
-    public fun <T : IMusicDecode> setAVFileDecodeEngine(t: T) {
+    fun <T : IMusicDecode> setAVFileDecodeEngine(t: T) {
         mAVFileDecodeEngine = t
     }
 
     /**
      * 动态替换媒体编辑模块
      */
-    public fun <T : IAVEditor> setAVFileDecodeEngine(t: T) {
+    fun <T : IAVEditor> setAVFileDecodeEngine(t: T) {
         mAVEditor = t
     }
 
     /**
      * 动态替换复用器
      */
-    public fun <T : INativeMuxer> setAVMuxerEngine(t: T) {
+    fun <T : INativeMuxer> setAVMuxerEngine(t: T) {
         mAVMuxer = t
     }
 
     /**
      * 拿到播放的模块
      */
-    public fun getAVPlayEngine(): IPlayer? = mPlayerEngine
+    fun getAVPlayEngine(): IPlayer? = mPlayerEngine
 
     /**
      * 拿到媒体解码模块
      */
-    public fun getAVDecodeEngine(): IMusicDecode? = mAVFileDecodeEngine
+    fun getAVDecodeEngine(): IMusicDecode? = mAVFileDecodeEngine
 
 
     /**
      * 拿到媒体编辑模块
      */
-    public fun getAVEditorEngine(): IAVEditor? = mAVEditor
+    fun getAVEditorEngine(): IAVEditor? = mAVEditor
 
 
     /**
      * 拿到媒体编辑模块
      */
-    public fun getAVMuxerEngine(): INativeMuxer? = mAVMuxer
+    fun getAVMuxerEngine(): INativeMuxer? = mAVMuxer
 
     /**
      * 拿到媒体编辑模块
      */
-    public fun getAVJavaMuxer(): IJavaMuxer? = mAVJavaMuxer
+    fun getAVJavaMuxer(): IJavaMuxer? = mAVJavaMuxer
 
     /**
      * 拿到速率控制
      */
-    public fun getAVSpeedEngine(): ISpeedController? = mSpeedController
+    fun getAVSpeedEngine(): ISpeedController? = mSpeedController
 }

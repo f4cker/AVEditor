@@ -15,7 +15,7 @@ import com.devyk.aveditor.R
  *
  * </pre>
  */
-public class CameraFilter : BaseFBOFilter {
+class CameraFilter : BaseFBOFilter {
 
     protected var mMatrix: FloatArray? = null
 
@@ -33,7 +33,7 @@ public class CameraFilter : BaseFBOFilter {
         //设置显示窗口
         GLES20.glViewport(0, 0, mSurfaceWidth, mSurfaceHeight)
 
-        //不调用的话就是默认的操作glsurfaceview中的纹理了。显示到屏幕上了
+        //不调用的话就是默认的操作 GLSurfaceView 中的纹理了。显示到屏幕上了
         //这里我们还只是把它画到fbo中(缓存)
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers!![0])
 
@@ -41,11 +41,11 @@ public class CameraFilter : BaseFBOFilter {
         GLES20.glUseProgram(mGLProgramId)
 
         //传递坐标
-        mGLVertexBuffer?.position(0)
+        mGLVertexBuffer.position(0)
         GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 0, mGLVertexBuffer)
         GLES20.glEnableVertexAttribArray(vPosition)
 
-        mGLTextureBuffer?.position(0)
+        mGLTextureBuffer.position(0)
         GLES20.glVertexAttribPointer(vCoord, 2, GLES20.GL_FLOAT, false, 0, mGLTextureBuffer)
         GLES20.glEnableVertexAttribArray(vCoord)
 

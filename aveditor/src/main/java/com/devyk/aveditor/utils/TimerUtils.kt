@@ -1,8 +1,9 @@
 package com.devyk.aveditor.utils
 
 import android.annotation.SuppressLint
-import android.os.*
-import java.util.concurrent.locks.ReentrantLock
+import android.os.Handler
+import android.os.Message
+import android.os.SystemClock
 
 /**
  * <pre>
@@ -13,13 +14,12 @@ import java.util.concurrent.locks.ReentrantLock
  *     desc    : This is TimerUtilsUtils
  * </pre>
  */
-public class TimerUtils(private val mListener: OnTimerUtilsListener, private var mUpdateInterval: Int) {
+class TimerUtils(private val mListener: OnTimerUtilsListener, private var mUpdateInterval: Int) {
 
     private var mHandler: Handler? = null
     private var mStartTime: Long = 0
     var duration: Int = 0
     private var TAG = "TimerUtils"
-
 
 
     interface OnTimerUtilsListener {

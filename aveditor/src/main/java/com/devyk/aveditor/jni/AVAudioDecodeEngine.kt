@@ -12,7 +12,7 @@ import com.devyk.aveditor.utils.LogHelper.TAG
  *     desc    : This is AVAudioDecodeEngine 负责文件解码
  * </pre>
  */
-public class AVAudioDecodeEngine : IMusicDecode {
+class AVAudioDecodeEngine : IMusicDecode {
 
 
     private var mListener: IMusicDecode.OnDecodeListener? = null
@@ -21,39 +21,37 @@ public class AVAudioDecodeEngine : IMusicDecode {
      * C++ 实现
      * 初始化解码器
      */
-    public external override fun addRecordMusic(musicPath: String?)
+    external override fun addRecordMusic(musicPath: String?)
 
     /**
      * C++ 实现
      * 开始解码
      */
-    public external override fun start()
+    external override fun start()
 
     /**
      * C++ 实现
      * 暂停解码
      */
-    public external override fun pause()
+    external override fun pause()
 
     /**
      * 恢复解码
      */
-    public external override fun resume()
+    external override fun resume()
 
     /**
      * C++ 实现
      * 停止解码
      */
-    public external override fun stop()
+    external override fun stop()
 
     /**
      * C++ 调用
      */
     fun onPCMData(data: ByteArray) {
-        data?.let {
-            mListener?.let {
-                it.onDecodeData(data)
-            }
+        data.let {
+            mListener?.onDecodeData(data)
         }
     }
 
@@ -62,9 +60,7 @@ public class AVAudioDecodeEngine : IMusicDecode {
      */
     fun onDecodeStart(sampleRate: Int, channels: Int, sampleFormat: Int) {
         LogHelper.e(TAG, "sampleRate:${sampleRate} channels:${channels} sampleFormat:${sampleFormat}")
-        mListener?.let {
-            it.onDecodeStart(sampleRate, channels, sampleFormat)
-        }
+        mListener?.onDecodeStart(sampleRate, channels, sampleFormat)
     }
 
     /**
@@ -72,9 +68,7 @@ public class AVAudioDecodeEngine : IMusicDecode {
      */
     fun onDecodeStop() {
         LogHelper.e(TAG, "onDecodeStop")
-        mListener?.let {
-            it.onDecodeStop()
-        }
+        mListener?.onDecodeStop()
 
     }
 

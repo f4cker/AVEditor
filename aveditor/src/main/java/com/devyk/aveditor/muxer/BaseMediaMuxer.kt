@@ -18,7 +18,7 @@ import java.nio.ByteBuffer
 public open class BaseMediaMuxer(path: String?, outType: Int) : IMuxer {
 
 
-    protected var mMeidaMuxer: MediaMuxer? = null
+    protected var mMediaMuxer: MediaMuxer? = null
 
     private var TAG = javaClass.simpleName
 
@@ -30,33 +30,33 @@ public open class BaseMediaMuxer(path: String?, outType: Int) : IMuxer {
 
     final override fun init(path: String?, outType: Int) {
         checkNotNull(path)
-        mMeidaMuxer = MediaMuxer(path, outType)
+        mMediaMuxer = MediaMuxer(path, outType)
         isStart = false
     }
 
     override fun start() {
-        mMeidaMuxer?.start()
+        mMediaMuxer?.start()
         isStart = true
     }
 
-    override fun addTrack(format: MediaFormat?): Int? = mMeidaMuxer?.addTrack(format!!)
+    override fun addTrack(format: MediaFormat?): Int? = mMediaMuxer?.addTrack(format!!)
 
     override fun writeSampleData(trackIndex: Int, byteBuf: ByteBuffer, bufferInfo: MediaCodec.BufferInfo) {
-        mMeidaMuxer?.writeSampleData(trackIndex, byteBuf, bufferInfo)
+        mMediaMuxer?.writeSampleData(trackIndex, byteBuf, bufferInfo)
     }
 
-    public fun isStart(): Boolean? = isStart
+    fun isStart(): Boolean = isStart
 
 
-    public fun setStart(start:Boolean){
+    fun setStart(start: Boolean) {
         isStart = start
     }
 
     override fun release() {
-        if (!isStart()!!) return
+        if (!isStart()) return
         try {
-            mMeidaMuxer?.stop()
-            mMeidaMuxer?.release()
+            mMediaMuxer?.stop()
+            mMediaMuxer?.release()
             isStart = false
         } catch (error: Exception) {
             LogHelper.e(TAG, error.toString())

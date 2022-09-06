@@ -3,7 +3,6 @@ package com.devyk.aveditor.widget
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import android.util.Log
 import com.devyk.aveditor.callback.IYUVDataListener
 import com.devyk.aveditor.callback.OnSelectFilterListener
 import com.devyk.aveditor.entity.Watermark
@@ -13,7 +12,6 @@ import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.video.filter.gpuimage.base.GPUImageFilter
 import com.devyk.aveditor.video.filter.helper.AVFilterType
 import com.devyk.aveditor.video.renderer.AVEditorRenderer
-import com.devyk.aveditor.video.renderer.AVRecordRenderer
 
 
 /**
@@ -66,7 +64,7 @@ class AVEditorView : GLSurfaceView, IYUVDataListener, Runnable {
     /**
      * 设置编辑源
      */
-    public fun setEditSource(source: String?) {
+    fun setEditSource(source: String?) {
         mDataSource = source
         mIPlayer?.setDataSource(source)
     }
@@ -75,12 +73,12 @@ class AVEditorView : GLSurfaceView, IYUVDataListener, Runnable {
     /**
      * 设置是否在 native 端渲染
      */
-    public fun setNativeRender(isNativeRender: Boolean) = mIPlayer?.setNativeRender(isNativeRender)
+    fun setNativeRender(isNativeRender: Boolean) = mIPlayer?.setNativeRender(isNativeRender)
 
     /**
      * 播放
      */
-    public fun start() {
+    fun start() {
         mIPlayer?.setNativeRender(false)
         mIPlayer?.start()
     }
@@ -88,7 +86,7 @@ class AVEditorView : GLSurfaceView, IYUVDataListener, Runnable {
     /**
      * 停止
      */
-    public fun stop() {
+    fun stop() {
         mIPlayer?.stop()
         isExit = true
     }
@@ -96,17 +94,17 @@ class AVEditorView : GLSurfaceView, IYUVDataListener, Runnable {
     /**
      * 播放进度
      */
-    public fun progress(): Double = mIPlayer?.progress()!!
+    fun progress(): Double = mIPlayer?.progress()!!
 
     /**
      * 暂停
      */
-    public fun setPause(status: Boolean) = mIPlayer?.setPause(status)
+    fun setPause(status: Boolean) = mIPlayer?.setPause(status)
 
     /**
      * 指定跳转到某个时间点播放
      */
-    public fun seekTo(seek: Double): Int? = mIPlayer?.seekTo(seek)
+    fun seekTo(seek: Double): Int? = mIPlayer?.seekTo(seek)
 
     override fun onYUV420pData(width: Int, height: Int, y: ByteArray, u: ByteArray, v: ByteArray) {
         mPlayComplete = false
@@ -130,7 +128,7 @@ class AVEditorView : GLSurfaceView, IYUVDataListener, Runnable {
     fun setGPUImageFilter(type: AVFilterType?, listener: OnSelectFilterListener) {
         queueEvent {
             val gpuImageFilter = mEditorRenderer?.setGPUImageFilter(type)
-            listener?.onSelectFilter(gpuImageFilter)
+            listener.onSelectFilter(gpuImageFilter)
         }
     }
 
@@ -147,7 +145,7 @@ class AVEditorView : GLSurfaceView, IYUVDataListener, Runnable {
     /**
      * 添加水印
      */
-    public fun addWatermark(watermark: Watermark?) {
+    fun addWatermark(watermark: Watermark?) {
         mEditorRenderer?.addWatermark(watermark)
     }
 

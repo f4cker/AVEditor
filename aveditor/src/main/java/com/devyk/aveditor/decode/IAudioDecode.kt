@@ -11,40 +11,40 @@ import com.devyk.aveditor.jni.IMusicDecode
  *     desc    : This is IAudioDecode
  * </pre>
  */
-public interface IAudioDecode {
+interface IAudioDecode {
     /**
      * C++ 实现
      * 初始化解码器
      */
-    public fun addRecordMusic(path: String?)
+    fun addRecordMusic(path: String?)
 
     /**
      * C++ 实现
      * 开始解码
      */
-    public fun start()
+    fun start()
 
     /**
      * C++ 实现
      * 暂停解码
      */
-    public fun pause()
+    fun pause()
 
     /**
      * 恢复解码
      */
-    public fun resume()
+    fun resume()
 
 
     /**
      * 解码回调
      */
-    fun addOnDecodeListener(listener: IMusicDecode.OnDecodeListener);
+    fun addOnDecodeListener(listener: IMusicDecode.OnDecodeListener)
 
     /**
      * C++ 实现
      * 停止解码
      */
-    public fun stop()
+    fun stop()
 
 }

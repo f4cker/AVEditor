@@ -10,7 +10,6 @@ import com.devyk.aveditor.entity.Speed
 import com.devyk.aveditor.stream.packer.PackerType
 import com.devyk.aveditor.utils.LogHelper
 import com.devyk.aveditor.widget.base.AVCameraView
-import javax.microedition.khronos.opengles.GL10
 
 
 /**
@@ -22,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10
  *     desc    : This is AVRecordView
  * </pre>
  */
-public class AVRecordView : AVCameraView {
+class AVRecordView : AVCameraView {
 
 
     private var mVideoConfiguration = VideoConfiguration.createDefault()
@@ -69,13 +68,13 @@ public class AVRecordView : AVCameraView {
     /**
      * 设置需要录制的音频源
      */
-    public fun setRecordAudioSource(recordAudioSource: String?) {
+    fun setRecordAudioSource(recordAudioSource: String?) {
         LogHelper.e("SORT->", "setRecordAudioSource")
         mStreamController?.setRecordAudioSource(recordAudioSource)
 
     }
 
-    public fun setBgMusicSource(bgMusic: String) {}
+    fun setBgMusicSource(bgMusic: String) {}
 
     /**
      * 开始录制
@@ -105,14 +104,6 @@ public class AVRecordView : AVCameraView {
     override fun onSurfaceCreated(textureId: Int, eglContext: EGLContext) {
         super.onSurfaceCreated(textureId, eglContext)
         mStreamController?.prepare(context, textureId, eglContext)
-    }
-
-    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        super.onSurfaceChanged(gl, width, height)
-    }
-
-    override fun onDrawFrame(mMtx: FloatArray) {
-        super.onDrawFrame(mMtx)
     }
 
 

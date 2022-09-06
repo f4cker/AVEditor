@@ -1,5 +1,6 @@
 package com.devyk.aveditor.utils
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.pm.PackageManager
@@ -18,6 +19,7 @@ import java.nio.BufferOverflowException
 import java.nio.ByteBuffer
 import java.nio.channels.WritableByteChannel
 import java.util.*
+import kotlin.math.abs
 
 /**
  * <pre>
@@ -210,7 +212,7 @@ public object MediaMergeUtils {
 
 
     /**
-     * 根据toWidth和toHieght，返回适用于bitmap的srcRect,只裁剪不压缩
+     * 根据toWidth和toHeight，返回适用于bitmap的srcRect,只裁剪不压缩
      * 裁剪方式为裁上下或两边
      *
      * @param srcRect
@@ -221,42 +223,42 @@ public object MediaMergeUtils {
      * @return
      */
     fun getCroppedRect(srcRect: Rect?, bitmapWidth: Int, bitmapHeight: Int, toWidth: Float, toHeight: Float): Rect {
-        var srcRect = srcRect
-        if (srcRect == null) {
-            srcRect = Rect()
+        var tempSrcRect = srcRect
+        if (tempSrcRect == null) {
+            tempSrcRect = Rect()
         }
         val rate = toWidth / toHeight
         val bitmapRate = bitmapWidth / bitmapHeight.toFloat()
 
-        if (Math.abs(rate - bitmapRate) < 0.01) {
+        if (abs(rate - bitmapRate) < 0.01) {
 
-            srcRect.left = 0
-            srcRect.top = 0
-            srcRect.right = bitmapWidth
-            srcRect.bottom = bitmapHeight
+            tempSrcRect.left = 0
+            tempSrcRect.top = 0
+            tempSrcRect.right = bitmapWidth
+            tempSrcRect.bottom = bitmapHeight
         } else if (bitmapRate > rate) {
             //裁两边
             val cutRate = toHeight / bitmapHeight.toFloat()
             val toCutWidth = cutRate * bitmapWidth - toWidth
             val toCutWidthReal = toCutWidth / cutRate
 
-            srcRect.left = (toCutWidthReal / 2).toInt()
-            srcRect.top = 0
-            srcRect.right = bitmapWidth - (toCutWidthReal / 2).toInt()
-            srcRect.bottom = bitmapHeight
+            tempSrcRect.left = (toCutWidthReal / 2).toInt()
+            tempSrcRect.top = 0
+            tempSrcRect.right = bitmapWidth - (toCutWidthReal / 2).toInt()
+            tempSrcRect.bottom = bitmapHeight
         } else {
             //裁上下
             val cutRate = toWidth / bitmapWidth.toFloat()
             val toCutHeight = cutRate * bitmapHeight - toHeight
             val toCutHeightReal = toCutHeight / cutRate
 
-            srcRect.left = 0
-            srcRect.top = (toCutHeightReal / 2).toInt()
-            srcRect.right = bitmapWidth
-            srcRect.bottom = bitmapHeight - (toCutHeightReal / 2).toInt()
+            tempSrcRect.left = 0
+            tempSrcRect.top = (toCutHeightReal / 2).toInt()
+            tempSrcRect.right = bitmapWidth
+            tempSrcRect.bottom = bitmapHeight - (toCutHeightReal / 2).toInt()
 
         }
-        return srcRect
+        return tempSrcRect
     }
 
     fun isCN(): Boolean {
@@ -274,12 +276,12 @@ public object MediaMergeUtils {
     }
 
     fun getVersionCode(context: Context): Int {
-        try {
+        return try {
             val pi = context.packageManager.getPackageInfo(context.packageName, 0)
-            return pi.versionCode
+            pi.versionCode
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
-            return 0
+            0
         }
 
     }
@@ -301,16 +303,17 @@ public object MediaMergeUtils {
             MediaRecorder.AudioSource.VOICE_RECOGNITION
         )
 
+        @SuppressLint("MissingPermission")
         override fun run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO)
             try {
-                val min_buffer_size = AudioRecord.getMinBufferSize(
+                val minBufferSize = AudioRecord.getMinBufferSize(
                     SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT
                 )
-                var buffer_size = SAMPLES_PER_FRAME * FRAMES_PER_BUFFER
-                if (buffer_size < min_buffer_size) {
-                    buffer_size = (min_buffer_size / SAMPLES_PER_FRAME + 1) * SAMPLES_PER_FRAME * 2
+                var bufferSize = SAMPLES_PER_FRAME * FRAMES_PER_BUFFER
+                if (bufferSize < minBufferSize) {
+                    bufferSize = (minBufferSize / SAMPLES_PER_FRAME + 1) * SAMPLES_PER_FRAME * 2
                 }
 
                 var audioRecord: AudioRecord? = null
@@ -318,7 +321,7 @@ public object MediaMergeUtils {
                     try {
                         audioRecord = AudioRecord(
                             source, SAMPLE_RATE,
-                            AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, buffer_size
+                            AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize
                         )
                         if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
                             audioRecord = null
@@ -350,17 +353,19 @@ public object MediaMergeUtils {
         }
 
         companion object {
-            private val MIME_TYPE = "audio/mp4a-latm"
-            private val SAMPLE_RATE = 44100    // 44.1[KHz] is only setting guaranteed to be available on all devices.
-            private val BIT_RATE = 64000
-            val SAMPLES_PER_FRAME = 1024    // AAC, bytes/frame/channel
-            val FRAMES_PER_BUFFER = 25    // AAC, frame/buffer/sec
+            const val MIME_TYPE = "audio/mp4a-latm"
+            const val SAMPLE_RATE =
+                44100    // 44.1[KHz] is only setting guaranteed to be available on all devices.
+            const val BIT_RATE = 64000
+            const val SAMPLES_PER_FRAME = 1024    // AAC, bytes/frame/channel
+            const val FRAMES_PER_BUFFER = 25    // AAC, frame/buffer/sec
         }
     }
 
+    @SuppressLint("WrongConstant")
     @Throws(IOException::class)
     fun combineVideoSegments(videoList: List<MediaEntity>?, outputPath: String) {
-        if (videoList == null || videoList.size == 0) {
+        if (videoList == null || videoList.isEmpty()) {
             return
         }
         if (videoList.size == 1) {

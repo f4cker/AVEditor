@@ -1,4 +1,4 @@
-package com.devyk.av.rtmp.library.callback
+package com.devyk.aveditor.callback
 
 /**
  * <pre>

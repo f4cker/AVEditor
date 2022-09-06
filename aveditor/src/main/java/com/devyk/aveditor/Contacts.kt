@@ -1,7 +1,5 @@
 package com.devyk.aveditor
 
-import java.util.concurrent.Semaphore
-
 /**
  * <pre>
  *     author  : devyk on 2020-07-15 21:44
@@ -11,14 +9,15 @@ import java.util.concurrent.Semaphore
  *     desc    : This is Contacts
  * </pre>
  */
-public object Contacts {
+object Contacts {
     //rtmp 初始化失败
     var RTMP_INIT_ERROR = -9
+
     //设置 rtmp url 失败
     var RTMP_SET_URL_ERROR = -10
+
     //连接服务器失败
     var RTMP_CONNECT_ERROR = -11
-
 
 
 }

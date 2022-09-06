@@ -13,7 +13,7 @@ import java.nio.ByteBuffer
  *     desc    : This is IMuxer
  * </pre>
  */
-public interface IMuxer {
+interface IMuxer {
 
     /**
      * 初始化 复用器

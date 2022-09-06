@@ -12,7 +12,7 @@ import com.devyk.aveditor.entity.MediaEntity
  *     desc    : This is IAVEditor 负责音视频编辑
  * </pre>
  */
-public interface IAVEditor {
+interface IAVEditor {
     /**
      * 添加一个音视频片段
      */
@@ -41,7 +41,7 @@ public interface IAVEditor {
     /**
      * 删除一个片段
      */
-    fun removeAVFile(index: Int);
+    fun removeAVFile(index: Int)
 
     /**
      * 开始输出音视频文件

@@ -11,7 +11,7 @@ import com.devyk.aveditor.entity.Speed
  *     desc    : This is AVSpeedEngine
  * </pre>
  */
-public class AVSpeedEngine : ISpeedController {
+class AVSpeedEngine : ISpeedController {
 
 
     private var channels: Int = 1
@@ -20,7 +20,7 @@ public class AVSpeedEngine : ISpeedController {
     private var pitchSemi: Double = 1.0
     private var track: Int = 0
 
-    override external fun initSpeedController(
+    external override fun initSpeedController(
         track: Int,
         channels: Int,
         samplingRate: Int,
@@ -28,9 +28,9 @@ public class AVSpeedEngine : ISpeedController {
         pitchSemi: Double
     )
 
-    override external fun putData(track: Int, input: ByteArray,  length: Int): Int
+    external override fun putData(track: Int, input: ByteArray, length: Int): Int
     external override fun getData(track: Int, shortArray: ShortArray, length: Int): Int
-    override external fun close(track: Int);
+    external override fun close(track: Int)
 
     override fun setRecordSpeed(track: Int, speed: Speed) {
         setRecordSpeed(track, speed.value)

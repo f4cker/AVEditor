@@ -1,5 +1,5 @@
 package com.devyk.aveditor.utils
- 
+
 import java.util.concurrent.*
 /**
  * <pre>
@@ -13,43 +13,43 @@ import java.util.concurrent.*
 class ThreadPoolManager private constructor() {
 
     private val TAG = this.javaClass.simpleName
- 
+
     private var threadPoolMap = hashMapOf<String, ThreadPoolExecutor>()
- 
+
     /**
      * cpu数量
      * */
     private val CPU_COUNT = Runtime.getRuntime().availableProcessors()
- 
+
     /**
      * 核心线程数为手机CPU数量+1
      * */
     private val CORE_POOL_SIZE = CPU_COUNT + 1
- 
+
     /**
      * 最大线程数为手机CPU数量×2+1
      * */
     private val MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1
- 
+
     /**
      * 线程活跃时间 秒，超时线程会被回收
      * */
     private val KEEP_ALIVE_TIME: Long = 3
- 
+
     /**
      * 等待队列大小
      * */
     private val QUEUE_SIZE = 128
- 
+
     companion object {
         fun getInstance() = SingleHolder.SINGLE_HOLDER
     }
- 
+
     object SingleHolder {
         val SINGLE_HOLDER = ThreadPoolManager()
     }
- 
- 
+
+
     /**
      *   @param tag 针对每个TAG 获取对应的线程池
      *   @param corePoolSize  线程池中核心线程的数量
@@ -88,15 +88,15 @@ class ThreadPoolManager private constructor() {
         }
         return threadPoolExecutor
     }
- 
+
     /**
      *  @param tag 针对每个TAG 获取对应的线程池
      *  @param runnable 对应的 runnable 任务
      * */
     fun removeTask(tag: String, runnable: Runnable) {
-        getThreadPool(tag)?.queue?.remove(runnable)
+        getThreadPool(tag).queue?.remove(runnable)
     }
- 
+
     /**
      *  @param tag 针对每个TAG 获取对应的线程池
      *  @param runnable 对应的 runnable 任务
@@ -104,16 +104,16 @@ class ThreadPoolManager private constructor() {
     fun addTask(tag: String, runnable: Runnable) {
         getThreadPool(tag).execute(runnable)
     }
- 
+
     /**
      *   @param tag 针对每个TAG 获取对应的线程池
      *   取消 移除线程池
      * */
- 
+
     //shutDown()：关闭线程池后不影响已经提交的任务
     //shutDownNow()：关闭线程池后会尝试去终止正在执行任务的线程
     fun exitThreadPool(tag: String) {
-        var threadPoolExecutor = threadPoolMap[tag]
+        val threadPoolExecutor = threadPoolMap[tag]
         if (threadPoolExecutor != null) {
             threadPoolExecutor.shutdownNow()
             threadPoolMap.remove(tag)

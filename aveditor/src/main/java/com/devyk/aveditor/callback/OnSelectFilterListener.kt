@@ -11,6 +11,6 @@ import com.devyk.aveditor.video.filter.gpuimage.base.GPUImageFilter
  *     desc    : This is OnSelectFilterListener
  * </pre>
  */
-public interface OnSelectFilterListener {
+interface OnSelectFilterListener {
     fun onSelectFilter(gpuImageFilter: GPUImageFilter?)
 }

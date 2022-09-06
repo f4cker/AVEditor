@@ -2,7 +2,6 @@ package com.devyk.aveditor.blacklist
 
 import android.os.Build
 import android.text.TextUtils
-import java.util.*
 
 /**
  * <pre>
@@ -22,7 +21,7 @@ object BlackListHelper {
 
 
     fun deviceInAecBlacklisted(): Boolean {
-        val blackListedModels = Arrays.asList(*BLACKLISTED_AEC_MODELS)
+        val blackListedModels = listOf(*BLACKLISTED_AEC_MODELS)
         for (blackModel in blackListedModels) {
             val model = Build.MODEL
             if (!TextUtils.isEmpty(model) && model.contains(blackModel)) {
@@ -33,7 +32,7 @@ object BlackListHelper {
     }
 
     fun deviceInFpsBlacklisted(): Boolean {
-        val blackListedModels = Arrays.asList(*BLACKLISTED_FPS_MODELS)
+        val blackListedModels = listOf(*BLACKLISTED_FPS_MODELS)
         for (blackModel in blackListedModels) {
             val model = Build.MODEL
             if (!TextUtils.isEmpty(model) && model.contains(blackModel)) {
