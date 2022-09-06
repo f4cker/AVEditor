@@ -22,18 +22,16 @@ package com.devyk.ffmpeglib.config;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-
+import com.devyk.ffmpeglib.callback.LogCallback;
+import com.devyk.ffmpeglib.callback.StatisticsCallback;
 import com.devyk.ffmpeglib.entity.AbiDetect;
 import com.devyk.ffmpeglib.entity.FFmpegExecution;
 import com.devyk.ffmpeglib.entity.Level;
-import com.devyk.ffmpeglib.callback.LogCallback;
-import com.devyk.ffmpeglib.callback.StatisticsCallback;
 import com.devyk.ffmpeglib.entity.LogMessage;
 import com.devyk.ffmpeglib.entity.Packages;
 import com.devyk.ffmpeglib.entity.Signal;
 import com.devyk.ffmpeglib.entity.Statistics;
 import com.devyk.ffmpeglib.util.CameraSupport;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -218,11 +216,6 @@ public class Config {
                     android.util.Log.d(TAG, text);
                 }
                 break;
-                case AV_LOG_STDERR:
-                case AV_LOG_VERBOSE: {
-                    android.util.Log.v(TAG, text);
-                }
-                break;
                 case AV_LOG_INFO: {
                     android.util.Log.i(TAG, text);
                 }
@@ -237,6 +230,8 @@ public class Config {
                     android.util.Log.e(TAG, text);
                 }
                 break;
+                case AV_LOG_STDERR:
+                case AV_LOG_VERBOSE:
                 default: {
                     android.util.Log.v(TAG, text);
                 }

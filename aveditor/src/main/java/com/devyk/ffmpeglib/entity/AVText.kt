@@ -21,10 +21,10 @@ class AVText
  */
     (x: Int, y: Int, size: Float, color: Color, ttf: String, text: String, time: Time?) {
 
-    val textFitler: String
+    val textFilter: String
 
     init {
-        this.textFitler =
+        this.textFilter =
             "drawtext=fontfile=" + ttf + ":fontsize=" + size + ":fontcolor=" + color.color + ":x=" + x + ":y=" + y + ":text='" + text + "'" + (time?.time
                 ?: "")
     }

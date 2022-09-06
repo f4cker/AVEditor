@@ -21,18 +21,18 @@ object FileUtils {
 
     /**
      * 此类用于生成合并视频所需要的文档
-     * @param strcontent 视频路径集合
+     * @param contents 视频路径集合
      * @param filePath 生成的地址
      * @param fileName 生成的文件名
      */
-    fun writeTxtToFile(strcontent: List<String>, filePath: String, fileName: String) {
+    fun writeTxtToFile(contents: List<String>, filePath: String, fileName: String) {
         //生成文件夹之后，再生成文件，不然会出错
         makeFilePath(filePath, fileName)
         val strFilePath = filePath + fileName
         // 每次写入时，都换行写
         var strContent = ""
-        for (i in strcontent.indices) {
-            strContent += "file " + strcontent[i] + "\r\n"
+        for (i in contents.indices) {
+            strContent += "file " + contents[i] + "\r\n"
         }
         try {
             val file = File(strFilePath)
@@ -84,8 +84,8 @@ object FileUtils {
     }
 
 
-    //删除文件夹
-    public fun deleteDirectory(folder: File) {
+    // 删除文件夹
+    fun deleteDirectory(folder: File) {
         if (folder.exists()) {
             val files = folder.listFiles() ?: return
             for (i in files.indices) {
@@ -106,25 +106,25 @@ object FileUtils {
      * @param oldPath String  原文件路径
      * @param newPath String  复制后路径
      */
-    fun copyFilesFassets(context: Context, oldPath: String, newPath: String) {
+    fun copyFilesFromAssets(context: Context, oldPath: String, newPath: String) {
         try {
             val fileNames = context.assets.list(oldPath)
-            if (fileNames!!.size > 0) {
+            if (fileNames!!.isNotEmpty()) {
                 val file = File(newPath)
                 file.mkdirs()
                 for (fileName in fileNames) {
-                    copyFilesFassets(context, "$oldPath/$fileName", "$newPath/$fileName")
+                    copyFilesFromAssets(context, "$oldPath/$fileName", "$newPath/$fileName")
                 }
             } else {
                 val inputStream = context.assets.open(oldPath)
                 val ff = File(newPath)
+
                 if (!ff.exists()) {
                     val fos = FileOutputStream(ff)
                     val buffer = ByteArray(1024)
                     var byteCount = 0
-                    while (true) {
-                        byteCount =inputStream.read(buffer)
-                        if (byteCount == -1)return
+                    while (byteCount != -1) {
+                        byteCount = inputStream.read(buffer)
                         fos.write(buffer, 0, byteCount)
                     }
                     fos.flush()

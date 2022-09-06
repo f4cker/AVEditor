@@ -11,7 +11,7 @@ import com.devyk.ffmpeglib.entity.OutputOption
 import com.devyk.ffmpeglib.ffmpeg.FFmpeg
 import com.devyk.ffmpeglib.util.FileUtils
 import com.devyk.ffmpeglib.util.TrackUtils
-import com.devyk.ffmpeglib.util.VideoUitls
+import com.devyk.ffmpeglib.util.VideoUtils
 import java.io.IOException
 
 
@@ -142,7 +142,7 @@ object AVEditor {
             cmd.append("superfast")
         }
         cmd.append(outputOption.outPath)
-        var duration = VideoUitls.getDuration(epVideo.videoPath)
+        var duration = VideoUtils.getDuration(epVideo.videoPath)
         if (epVideo.videoClip) {
             val clipTime = ((epVideo.clipDuration - epVideo.clipStart) * 1000000).toLong()
             duration = if (clipTime < duration) clipTime else duration
@@ -274,7 +274,7 @@ object AVEditor {
             cmd.append("-preset").append("superfast").append(outputOption.outPath)
             var duration: Long = 0
             for (ep in epVideos) {
-                var d = VideoUitls.getDuration(ep.videoPath)
+                var d = VideoUtils.getDuration(ep.videoPath)
                 if (ep.videoClip) {
                     val clipTime = ((ep.clipDuration - ep.clipStart) * 1000000).toLong()
                     d = if (clipTime < d) clipTime else d
@@ -322,7 +322,7 @@ object AVEditor {
             .append("-c").append("copy").append(outputOption.outPath)
         var duration: Long = 0
         for (ep in epVideos) {
-            val d = VideoUitls.getDuration(ep.videoPath)
+            val d = VideoUtils.getDuration(ep.videoPath)
             if (d != 0L) {
                 duration += d
             } else {
@@ -374,7 +374,7 @@ object AVEditor {
         }
         cmd.append(output)
         mediaExtractor.release()
-        val d = VideoUitls.getDuration(videoin)
+        val d = VideoUtils.getDuration(videoin)
         execCmd(cmd, d, executeCallback)
     }
 
@@ -394,7 +394,7 @@ object AVEditor {
             Format.MP4 -> cmd.append("-vcodec").append("copy").append("-an")
         }
         cmd.append(out)
-        val d = VideoUitls.getDuration(videoIn)
+        val d = VideoUtils.getDuration(videoIn)
         execCmd(cmd, d, executeCallback)
     }
 
@@ -439,7 +439,7 @@ object AVEditor {
             cmd.append("-acodec").append("libmp3lame")
         }
         cmd.append("-preset").append("superfast").append(out)
-        val d = VideoUitls.getDuration(videoIn)
+        val d = VideoUtils.getDuration(videoIn)
         execCmd(cmd, d, executeCallback)
     }
 
@@ -482,7 +482,7 @@ object AVEditor {
                 .append("-map").append("[v]").append("-map").append("[a]")
         }
         cmd.append("-preset").append("superfast").append(out)
-        val d = VideoUitls.getDuration(videoIn)
+        val d = VideoUtils.getDuration(videoIn)
         val dd = (d / times).toDouble()
         val ddd = dd.toLong()
         execCmd(cmd, ddd, executeCallback)
@@ -522,7 +522,7 @@ object AVEditor {
             .append("-r").append(rate).append("-s").append(w.toString() + "x" + h).append("-q:v")
             .append(2)
             .append("-f").append("image2").append("-preset").append("superfast").append(out)
-        val d = VideoUitls.getDuration(videoIn)
+        val d = VideoUtils.getDuration(videoIn)
         execCmd(cmd, d, executeCallback)
     }
 
@@ -538,7 +538,7 @@ object AVEditor {
         executeCallback: ExecuteCallback
     ) {
         val video2Gif = "-i $videoIn -ss $startDuration -t $stopDuration $gifOut"
-        val d = VideoUitls.getDuration(videoIn)
+        val d = VideoUtils.getDuration(videoIn)
         execCmd(video2Gif, d, executeCallback)
     }
 
@@ -546,10 +546,15 @@ object AVEditor {
     fun mp4ToTs(mp4Path: String, tsPath: String,mp4Path2: String, tsPath2: String,executeCallback: ExecuteCallback) {
 //        ffmpeg -i a1.mp4 -vcodec copy -acodec copy -vbsf h264_mp4toannexb 1.ts
         val cmdList = AVCmdList()
-        cmdList.append("-i").append(mp4Path).append("-vcodec").append("copy").append("-vbsf").append("h264_mp4toannexb")
-            .append(tsPath).append("-i").append(mp4Path2).append("-vcodec").append("copy").append("-vbsf").append("h264_mp4toannexb")
+        cmdList.append("-i").append(mp4Path).append("-vcodec").append("copy").append("-vbsf")
+            .append("h264_mp4toannexb")
+            .append(tsPath).append("-i").append(mp4Path2).append("-vcodec").append("copy")
+            .append("-vbsf").append("h264_mp4toannexb")
             .append(tsPath2)
-        execCmd(cmdList,VideoUitls.getDuration(mp4Path)+VideoUitls.getDuration(mp4Path2),executeCallback)
+        execCmd(
+            cmdList,
+            VideoUtils.getDuration(mp4Path) + VideoUtils.getDuration(mp4Path2), executeCallback
+        )
     }
 
 

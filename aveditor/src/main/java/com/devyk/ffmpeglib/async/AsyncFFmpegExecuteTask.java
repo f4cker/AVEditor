@@ -22,15 +22,12 @@ package com.devyk.ffmpeglib.async;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-
 import com.devyk.ffmpeglib.callback.ExecuteCallback;
 import com.devyk.ffmpeglib.callback.LogCallback;
-
 import com.devyk.ffmpeglib.config.Config;
 import com.devyk.ffmpeglib.entity.LogMessage;
 import com.devyk.ffmpeglib.ffmpeg.FFmpeg;
 import com.tencent.mars.xlog.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +40,7 @@ public class AsyncFFmpegExecuteTask extends AsyncTask<Void, Integer, Integer> {
     private final String[] arguments;
     private static ExecuteCallback sExecuteCallback;
     private final Long executionId;
-    private static Long mVideoduration = -11L;
+    private static Long mVideoDuration = -11L;
     private AsyncLogCallback mAsyncLogCallback;
     protected static Handler mHandler = null;
 
@@ -67,16 +64,17 @@ public class AsyncFFmpegExecuteTask extends AsyncTask<Void, Integer, Integer> {
     public AsyncFFmpegExecuteTask(final long executionId, final String[] arguments, long videoduration, final com.devyk.ffmpeglib.callback.ExecuteCallback executeCallback) {
         this.executionId = executionId;
         this.arguments = arguments;
-        onDestory();
+        onDestroy();
         sExecuteCallback = executeCallback;
-        this.mVideoduration = videoduration;
+        mVideoDuration = videoduration;
         mHandler = new Handler(Looper.getMainLooper());
         mAsyncLogCallback = new AsyncLogCallback();
         enableLogCallback(mAsyncLogCallback);
     }
 
-    private void onDestory() {
-        mVideoduration = 0L;
+
+    private void onDestroy() {
+        mVideoDuration = 0L;
         if (sExecuteCallback != null) {
             sExecuteCallback = null;
         }
@@ -103,11 +101,12 @@ public class AsyncFFmpegExecuteTask extends AsyncTask<Void, Integer, Integer> {
         Config.enableLogCallback(asyncLogCallback);
     }
 
+
     /**
      * 子线程中执行
      *
-     * @param unused
-     * @return
+     * @param unused unused
+     * @return Integer
      */
     @Override
     protected Integer doInBackground(final Void... unused) {
@@ -118,7 +117,7 @@ public class AsyncFFmpegExecuteTask extends AsyncTask<Void, Integer, Integer> {
     /**
      * 主线程中执行
      *
-     * @param rc
+     * @param rc rc
      */
     @Override
     protected void onPostExecute(final Integer rc) {
@@ -137,19 +136,20 @@ public class AsyncFFmpegExecuteTask extends AsyncTask<Void, Integer, Integer> {
     /**
      * C++ 调用
      *
-     * @param progress
+     * @param progress progress
      */
     public static void progress(final float progress) {
-        if (mVideoduration != -1 && sExecuteCallback != null) {
-            final float v = progress / mVideoduration * 100;
+        if (mVideoDuration != -1 && sExecuteCallback != null) {
+            final float v = progress / mVideoDuration * 100;
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (judgeContainsStr(v)) {
                         return;
                     }
-                    if (v > 0f)
+                    if (v > 0f) {
                         sExecuteCallback.onProgress(v);
+                    }
                 }
             });
         } else {
@@ -163,10 +163,11 @@ public class AsyncFFmpegExecuteTask extends AsyncTask<Void, Integer, Integer> {
         }
     }
 
+
     /**
      * 判断是否存在字母
      *
-     * @param num
+     * @param num num
      */
     public static boolean judgeContainsStr(String num) {
         String regex = ".*[a-zA-Z]+.*";

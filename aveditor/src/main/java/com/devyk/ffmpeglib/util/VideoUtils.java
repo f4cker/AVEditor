@@ -5,10 +5,7 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
-
 import com.devyk.ffmpeglib.entity.VideoInfo;
-import com.devyk.ffmpeglib.util.TrackUtils;
-
 import java.text.DecimalFormat;
 
 
@@ -21,12 +18,12 @@ import java.text.DecimalFormat;
  *     desc    : This is VideoUitls
  * </pre>
  */
-public class VideoUitls {
+public class VideoUtils {
 
     /**
      * 获取视频信息
      *
-     * @param url
+     * @param url url
      * @return 视频时长（单位微秒）
      */
     public static long getDuration(String url) {
@@ -45,8 +42,6 @@ public class VideoUitls {
             MediaFormat mediaFormat = mediaExtractor.getTrackFormat(videoExt);
             if (mediaFormat.containsKey(MediaFormat.KEY_DURATION))
                 res = mediaFormat.getLong(MediaFormat.KEY_DURATION);
-            else //时长
-                res = 0;
             mediaExtractor.release();
             return res;
         } catch (Exception e) {
@@ -55,10 +50,11 @@ public class VideoUitls {
 
     }
 
+
     /**
      * 获取音轨数量
      *
-     * @return
+     * @return int
      */
     public static int getChannelCount(String url) {
         try {
@@ -111,8 +107,8 @@ public class VideoUitls {
 
 
     /**
-     * @param size
-     * @return
+     * @param size size
+     * @return String
      */
     public static String getSize(long size) {
         //获取到的size为：1705230

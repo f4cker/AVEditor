@@ -1,7 +1,5 @@
 package com.devyk.ffmpeglib.entity
 
-import java.util.ArrayList
-
 /**
  * <pre>
  *     author  : devyk on 2020-09-28 20:28
@@ -50,7 +48,7 @@ class AVVideo(
      * @return
      */
     var mFilter: StringBuilder? = null
-    
+
 
     //特效
     /**
@@ -157,9 +155,9 @@ class AVVideo(
     }
 
 
-    fun addText(avText: AVText){
+    fun addText(avText: AVText) {
         mFilter = getFilters()
-        mFilter?.append(avText.textFitler);
+        mFilter?.append(avText.textFilter);
     }
 
     /**

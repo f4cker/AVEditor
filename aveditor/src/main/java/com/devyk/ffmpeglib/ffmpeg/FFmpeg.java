@@ -20,12 +20,10 @@
 package com.devyk.ffmpeglib.ffmpeg;
 
 import android.os.AsyncTask;
-
 import com.devyk.ffmpeglib.async.AsyncFFmpegExecuteTask;
 import com.devyk.ffmpeglib.callback.ExecuteCallback;
 import com.devyk.ffmpeglib.config.Config;
 import com.devyk.ffmpeglib.entity.FFmpegExecution;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -51,11 +49,6 @@ public class FFmpeg {
    public static final long DEFAULT_EXECUTION_ID = 0;
 
     private static final AtomicLong executionIdCounter = new AtomicLong(3000);
-
-//    static {
-//        AbiDetect.class.getName();
-//        Config.class.getName();
-//    }
 
     /**
      * Default constructor hidden.
