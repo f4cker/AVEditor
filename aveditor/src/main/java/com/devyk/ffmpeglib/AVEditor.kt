@@ -26,12 +26,12 @@ import java.io.IOException
  */
 object AVEditor {
 
-    private val DEFAULT_WIDTH = 720//默认输出宽度
-    private val DEFAULT_HEIGHT = 1280//默认输出高度
-    private val DEFAULT_FAILURE = -1L
+    private const val DEFAULT_WIDTH = 720//默认输出宽度
+    private const val DEFAULT_HEIGHT = 1280//默认输出高度
+    private const val DEFAULT_FAILURE = -1L
 
 
-    private val FFMPEG_TAG = "ffmpeg"
+    private const val FFMPEG_TAG = "ffmpeg"
 
     enum class Format {
         MP3, MP4
@@ -70,56 +70,63 @@ object AVEditor {
                 epDraws[i].picPath?.let { cmd.append("-i").append(it) }
             }
             cmd.append("-filter_complex")
-            val filter_complex = StringBuilder()
-            filter_complex.append("[0:v]")
+            val filterComplex = StringBuilder()
+            filterComplex.append("[0:v]")
                 .append(if (epVideo.mFilter != null) epVideo.mFilter!!.toString() + "," else "")
-                .append("scale=").append(if (outputOption.width_ == 0) "iw" else outputOption.width_).append(":")
+                .append("scale=")
+                .append(if (outputOption.width_ == 0) "iw" else outputOption.width_).append(":")
                 .append(if (outputOption.height_ == 0) "ih" else outputOption.height_)
-                .append(if (outputOption.width_ == 0) "" else ",setdar=" + outputOption.getSar()).append("[outv0];")
+                .append(if (outputOption.width_ == 0) "" else ",setdar=" + outputOption.getSar())
+                .append("[outv0];")
             for (i in epDraws.indices) {
-                filter_complex.append("[").append(i + 1).append(":0]").append(epDraws[i].picFilter).append("scale=")
+                filterComplex.append("[").append(i + 1).append(":0]").append(epDraws[i].picFilter)
+                    .append("scale=")
                     .append(epDraws[i].picWidth).append(":")
                     .append(epDraws[i].picHeight).append("[outv").append(i + 1).append("];")
             }
             for (i in epDraws.indices) {
                 if (i == 0) {
-                    filter_complex.append("[outv").append(i).append("]").append("[outv").append(i + 1).append("]")
+                    filterComplex.append("[outv").append(i).append("]").append("[outv")
+                        .append(i + 1).append("]")
                 } else {
-                    filter_complex.append("[outo").append(i - 1).append("]").append("[outv").append(i + 1).append("]")
+                    filterComplex.append("[outo").append(i - 1).append("]").append("[outv")
+                        .append(i + 1).append("]")
                 }
-                filter_complex.append("overlay=").append(epDraws[i].picX).append(":").append(epDraws[i].picY)
+                filterComplex.append("overlay=").append(epDraws[i].picX).append(":")
+                    .append(epDraws[i].picY)
                     .append(epDraws[i].time)
                 if (epDraws[i].isAnimation) {
-                    filter_complex.append(":shortest=1")
+                    filterComplex.append(":shortest=1")
                 }
                 if (i < epDraws.size - 1) {
-                    filter_complex.append("[outo").append(i).append("];")
+                    filterComplex.append("[outo").append(i).append("];")
                 }
             }
-            cmd.append(filter_complex.toString())
+            cmd.append(filterComplex.toString())
             isFilter = true
         } else {
-            val filter_complex = StringBuilder()
+            val filterComplex = StringBuilder()
             if (epVideo.mFilter != null) {
                 cmd.append("-filter_complex")
-                filter_complex.append(epVideo.mFilter)
+                filterComplex.append(epVideo.mFilter)
                 isFilter = true
             }
             //设置输出分辨率
             if (outputOption.width_ != 0) {
                 if (epVideo.mFilter != null) {
-                    filter_complex.append(",scale=").append(outputOption.width_).append(":")
+                    filterComplex.append(",scale=").append(outputOption.width_).append(":")
                         .append(outputOption.height_)
                         .append(",setdar=").append(outputOption.getSar())
                 } else {
                     cmd.append("-filter_complex")
-                    filter_complex.append("scale=").append(outputOption.width_).append(":").append(outputOption.height_)
+                    filterComplex.append("scale=").append(outputOption.width_).append(":")
+                        .append(outputOption.height_)
                         .append(",setdar=").append(outputOption.getSar())
                     isFilter = true
                 }
             }
-            if (filter_complex.toString() != "") {
-                cmd.append(filter_complex.toString())
+            if (filterComplex.toString() != "") {
+                cmd.append(filterComplex.toString())
             }
         }
 
@@ -202,18 +209,24 @@ object AVEditor {
             }
             //添加滤镜标识
             cmd.append("-filter_complex")
-            val filter_complex = StringBuilder()
+            val filterComplex = StringBuilder()
             for (i in epVideos.indices) {
-                val filter = if (epVideos[i].mFilter == null) StringBuilder("") else epVideos[i].mFilter!!.append(",")
-                filter_complex.append("[").append(i).append(":v]").append(filter).append("scale=")
+                val filter =
+                    if (epVideos[i].mFilter == null) StringBuilder("") else epVideos[i].mFilter!!.append(
+                        ","
+                    )
+                filterComplex.append("[").append(i).append(":v]").append(filter).append("scale=")
                     .append(outputOption.width_).append(":").append(outputOption.height_)
-                    .append(",setdar=").append(outputOption.getSar()).append("[outv").append(i).append("];")
+                    .append(",setdar=").append(outputOption.getSar()).append("[outv").append(i)
+                    .append("];")
             }
             //添加标记和处理宽高
-            var drawNum = epVideos.size//图标计数器
+            //图标计数器
+            var drawNum = epVideos.size
             for (i in epVideos.indices) {
                 for (j in 0 until epVideos[i].epDraws.size) {
-                    filter_complex.append("[").append(drawNum++).append(":0]").append(epVideos[i].epDraws[j].picFilter)
+                    filterComplex.append("[").append(drawNum++).append(":0]")
+                        .append(epVideos[i].epDraws[j].picFilter)
                         .append("scale=")
                         .append(epVideos[i].epDraws[j].picWidth).append(":").append(
                             epVideos[i].epDraws[j]
@@ -224,38 +237,40 @@ object AVEditor {
             //添加图标操作
             for (i in epVideos.indices) {
                 for (j in 0 until epVideos[i].epDraws.size) {
-                    filter_complex.append("[outv").append(i).append("][p").append(i).append("a").append(j)
+                    filterComplex.append("[outv").append(i).append("][p").append(i).append("a")
+                        .append(j)
                         .append("]overlay=")
                         .append(epVideos[i].epDraws[j].picX).append(":")
                         .append(epVideos[i].epDraws[j].picY)
                         .append(epVideos[i].epDraws[j].time)
                     if (epVideos[i].epDraws[j].isAnimation) {
-                        filter_complex.append(":shortest=1")
+                        filterComplex.append(":shortest=1")
                     }
-                    filter_complex.append("[outv").append(i).append("];")
+                    filterComplex.append("[outv").append(i).append("];")
                 }
             }
             //开始合成视频
             for (i in epVideos.indices) {
-                filter_complex.append("[outv").append(i).append("]")
+                filterComplex.append("[outv").append(i).append("]")
             }
-            filter_complex.append("concat=n=").append(epVideos.size).append(":v=1:a=0[outv]")
+            filterComplex.append("concat=n=").append(epVideos.size).append(":v=1:a=0[outv]")
             //是否添加音轨
             if (!isNoAudioTrack) {
-                filter_complex.append(";")
+                filterComplex.append(";")
                 for (i in epVideos.indices) {
-                    filter_complex.append("[").append(i).append(":a]")
+                    filterComplex.append("[").append(i).append(":a]")
                 }
-                filter_complex.append("concat=n=").append(epVideos.size).append(":v=0:a=1[outa]")
+                filterComplex.append("concat=n=").append(epVideos.size).append(":v=0:a=1[outa]")
             }
-            if (filter_complex.toString() != "") {
-                cmd.append(filter_complex.toString())
+            if (filterComplex.toString() != "") {
+                cmd.append(filterComplex.toString())
             }
             cmd.append("-map").append("[outv]")
             if (!isNoAudioTrack) {
                 cmd.append("-map").append("[outa]")
             }
-            cmd.append(outputOption.outputInfo.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            cmd.append(outputOption.outputInfo.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray())
             cmd.append("-preset").append("superfast").append(outputOption.outPath)
             var duration: Long = 0
             for (ep in epVideos) {
@@ -366,40 +381,46 @@ object AVEditor {
     /**
      * 音视频分离
      *
-     * @param videoin          视频文件
+     * @param videoIn          视频文件
      * @param out              输出文件路径
      * @param format           输出类型
      * @param executeCallback 回调监听
      */
-    fun demuxer(videoin: String, out: String, format: Format, executeCallback: ExecuteCallback) {
+    fun deMuxer(videoIn: String, out: String, format: Format, executeCallback: ExecuteCallback) {
         val cmd = AVCmdList()
-        cmd.append("ffmpeg").append("-y").append("-i").append(videoin)
+        cmd.append("ffmpeg").append("-y").append("-i").append(videoIn)
         when (format) {
-            AVEditor.Format.MP3 -> cmd.append("-vn").append("-acodec").append("libmp3lame")
-            AVEditor.Format.MP4 -> cmd.append("-vcodec").append("copy").append("-an")
+            Format.MP3 -> cmd.append("-vn").append("-acodec").append("libmp3lame")
+            Format.MP4 -> cmd.append("-vcodec").append("copy").append("-an")
         }
         cmd.append(out)
-        val d = VideoUitls.getDuration(videoin)
+        val d = VideoUitls.getDuration(videoIn)
         execCmd(cmd, d, executeCallback)
     }
 
     /**
      * 音视频倒放
      *
-     * @param videoin          视频文件
+     * @param videoIn          视频文件
      * @param out              输出文件路径
      * @param vr               是否视频倒放
      * @param ar               是否音频倒放
      * @param executeCallback 回调监听
      */
-    fun reverse(videoin: String, out: String, vr: Boolean, ar: Boolean, executeCallback: ExecuteCallback) {
+    fun reverse(
+        videoIn: String,
+        out: String,
+        vr: Boolean,
+        ar: Boolean,
+        executeCallback: ExecuteCallback
+    ) {
         if (!vr && !ar) {
             Log.e("ffmpeg", "parameter error")
-            executeCallback.onFailure(-1, "parameter error");
+            executeCallback.onFailure(-1, "parameter error")
             return
         }
         val cmd = AVCmdList()
-        cmd.append("ffmpeg").append("-y").append("-i").append(videoin).append("-filter_complex")
+        cmd.append("ffmpeg").append("-y").append("-i").append(videoIn).append("-filter_complex")
         var filter = ""
         if (vr) {
             filter += "[0:v]reverse[v];"
@@ -418,27 +439,33 @@ object AVEditor {
             cmd.append("-acodec").append("libmp3lame")
         }
         cmd.append("-preset").append("superfast").append(out)
-        val d = VideoUitls.getDuration(videoin)
+        val d = VideoUitls.getDuration(videoIn)
         execCmd(cmd, d, executeCallback)
     }
 
     /**
      * 音视频变速
      *
-     * @param videoin          音视频文件
+     * @param videoIn          音视频文件
      * @param out              输出路径
      * @param times            倍率（调整范围0.25-4）
      * @param pts              加速类型
      * @param executeCallback 回调接口
      */
-    fun changePTS(videoin: String, out: String, times: Float, pts: PTS, executeCallback: ExecuteCallback) {
+    fun changePTS(
+        videoIn: String,
+        out: String,
+        times: Float,
+        pts: PTS,
+        executeCallback: ExecuteCallback
+    ) {
         if (times < 0.25f || times > 4.0f) {
             Log.e("ffmpeg", "times can only be 0.25 to 4")
             executeCallback.onFailure(-1, "times can only be 0.25 to 4")
             return
         }
         val cmd = AVCmdList()
-        cmd.append("ffmpeg").append("-y").append("-i").append(videoin)
+        cmd.append("ffmpeg").append("-y").append("-i").append(videoIn)
         var t = "atempo=$times"
         if (times < 0.5f) {
             t = "atempo=0.5,atempo=" + times / 0.5f
@@ -447,13 +474,15 @@ object AVEditor {
         }
         Log.v("ffmpeg", "atempo:$t")
         when (pts) {
-            AVEditor.PTS.VIDEO -> cmd.append("-filter_complex").append("[0:v]setpts=" + 1 / times + "*PTS").append("-an")
-            AVEditor.PTS.AUDIO -> cmd.append("-filter:a").append(t)
-            AVEditor.PTS.ALL -> cmd.append("-filter_complex").append("[0:v]setpts=" + 1 / times + "*PTS[v];[0:a]" + t + "[a]")
+            PTS.VIDEO -> cmd.append("-filter_complex").append("[0:v]setpts=" + 1 / times + "*PTS")
+                .append("-an")
+            PTS.AUDIO -> cmd.append("-filter:a").append(t)
+            PTS.ALL -> cmd.append("-filter_complex")
+                .append("[0:v]setpts=" + 1 / times + "*PTS[v];[0:a]" + t + "[a]")
                 .append("-map").append("[v]").append("-map").append("[a]")
         }
         cmd.append("-preset").append("superfast").append(out)
-        val d = VideoUitls.getDuration(videoin)
+        val d = VideoUitls.getDuration(videoIn)
         val dd = (d / times).toDouble()
         val ddd = dd.toLong()
         execCmd(cmd, ddd, executeCallback)
@@ -462,14 +491,21 @@ object AVEditor {
     /**
      * 视频转图片
      *
-     * @param videoin            音视频文件
+     * @param videoIn            音视频文件
      * @param out                输出路径
      * @param w                    输出图片宽度
      * @param h                    输出图片高度
      * @param rate                每秒视频生成图片数
      * @param executeCallback    回调接口
      */
-    fun video2pic(videoin: String, out: String, w: Int, h: Int, rate: Float, executeCallback: ExecuteCallback) {
+    fun video2pic(
+        videoIn: String,
+        out: String,
+        w: Int,
+        h: Int,
+        rate: Float,
+        executeCallback: ExecuteCallback
+    ) {
         if (w <= 0 || h <= 0) {
             Log.e("ffmpeg", "width and height must greater than 0")
             executeCallback.onFailure(DEFAULT_FAILURE, "width and height must greater than 0")
@@ -481,11 +517,12 @@ object AVEditor {
             return
         }
         val cmd = AVCmdList()
-        cmd.append("ffmpeg").append("-y").append("-i").append(videoin)
-//        cmd.append("-y").append("-i").append(videoin)
-            .append("-r").append(rate).append("-s").append(w.toString() + "x" + h).append("-q:v").append(2)
+        cmd.append("ffmpeg").append("-y").append("-i").append(videoIn)
+//        cmd.append("-y").append("-i").append(videoIn)
+            .append("-r").append(rate).append("-s").append(w.toString() + "x" + h).append("-q:v")
+            .append(2)
             .append("-f").append("image2").append("-preset").append("superfast").append(out)
-        val d = VideoUitls.getDuration(videoin)
+        val d = VideoUitls.getDuration(videoIn)
         execCmd(cmd, d, executeCallback)
     }
 
@@ -494,21 +531,21 @@ object AVEditor {
      * 视频转gif
      */
     fun video2Gif(
-        videoin: String,
+        videoIn: String,
         gifOut: String,
         startDuration: Int,
         stopDuration: Int,
         executeCallback: ExecuteCallback
     ) {
-        var video2Gif = "-i ${videoin} -ss ${startDuration} -t ${stopDuration} ${gifOut}"
-        val d = VideoUitls.getDuration(videoin)
-        execCmd(video2Gif, d, executeCallback);
+        val video2Gif = "-i $videoIn -ss $startDuration -t $stopDuration $gifOut"
+        val d = VideoUitls.getDuration(videoIn)
+        execCmd(video2Gif, d, executeCallback)
     }
 
 
     fun mp4ToTs(mp4Path: String, tsPath: String,mp4Path2: String, tsPath2: String,executeCallback: ExecuteCallback) {
 //        ffmpeg -i a1.mp4 -vcodec copy -acodec copy -vbsf h264_mp4toannexb 1.ts
-        var cmdList = AVCmdList();
+        val cmdList = AVCmdList()
         cmdList.append("-i").append(mp4Path).append("-vcodec").append("copy").append("-vbsf").append("h264_mp4toannexb")
             .append(tsPath).append("-i").append(mp4Path2).append("-vcodec").append("copy").append("-vbsf").append("h264_mp4toannexb")
             .append(tsPath2)
@@ -523,16 +560,16 @@ object AVEditor {
      * @param duration         视频时长（单位微秒）
      * @param executeCallback 回调接口
      */
-    public fun execCmd(cmd: String, duration: Long, executeCallback: ExecuteCallback) {
-        var cmd = cmd
+    fun execCmd(cmd: String, duration: Long, executeCallback: ExecuteCallback) {
+        var tempCmd = cmd
         try {
-            if (cmd.startsWith(FFMPEG_TAG)) {
-                cmd = cmd.replace(FFMPEG_TAG, "");
+            if (tempCmd.startsWith(FFMPEG_TAG)) {
+                tempCmd = tempCmd.replace(FFMPEG_TAG, "")
             }
         } catch (e: Exception) {
             Log.e("execCmd->", e.message.toString())
         }
-        val parseArguments = FFmpeg.parseArguments(cmd)
+        val parseArguments = FFmpeg.parseArguments(tempCmd)
         FFmpeg.executeAsync(parseArguments, duration, executeCallback)
     }
 
@@ -543,13 +580,11 @@ object AVEditor {
      * @param duration         视频时长（单位微秒）
      * @param executeCallback 回调接口
      */
-    public fun execCmd(cmd: AVCmdList, duration: Long, executeCallback: ExecuteCallback?) {
-        if (cmd.get(0).equals(FFMPEG_TAG)) {
+    fun execCmd(cmd: AVCmdList, duration: Long, executeCallback: ExecuteCallback?) {
+        if (cmd[0] == FFMPEG_TAG) {
             cmd.removeAt(0)
         }
-        val cmds = cmd.toTypedArray()
-        FFmpeg.executeAsync(cmds, duration, executeCallback)
+        val commands = cmd.toTypedArray()
+        FFmpeg.executeAsync(commands, duration, executeCallback)
     }
-
-
 }
