@@ -115,7 +115,10 @@ public class CameraHolder {
 //        }
     }
 
-    fun setSurfaceTexture(texture: SurfaceTexture, listener: SurfaceTexture.OnFrameAvailableListener?) {
+    fun setSurfaceTexture(
+        texture: SurfaceTexture,
+        listener: SurfaceTexture.OnFrameAvailableListener?
+    ) {
         mTexture = texture
 //        if (state == State.PREVIEW && mCameraDevice != null && mTexture != null) {
         try {
@@ -329,7 +332,6 @@ public class CameraHolder {
             e.printStackTrace()
             return false
         }
-
     }
 
     fun switchLight(): Boolean {
@@ -352,9 +354,7 @@ public class CameraHolder {
             e.printStackTrace()
             false
         }
-
     }
-
 
     /**
      * 设置预览回调，用于软编
@@ -374,6 +374,38 @@ public class CameraHolder {
      */
     public fun isOpenBackFirst(): Boolean {
         return isOpenBackFirst
+    }
+
+    /**
+     * Is flash light on
+     *
+     * @return
+     */
+    fun isFlashLightOn(): Boolean {
+        if (state != State.PREVIEW || mCameraDevice == null || cameraData == null) {
+            return false
+        }
+        if (!cameraData!!.hasLight) {
+            return false
+        }
+        val cameraParameters = mCameraDevice!!.parameters
+        return cameraParameters.flashMode != Camera.Parameters.FLASH_MODE_OFF
+    }
+
+
+    /**
+     * Is back camera
+     *
+     * @return
+     */
+    fun isBackCamera(): Boolean {
+        if (state != State.PREVIEW || mCameraDevice == null || cameraData == null) {
+            return isOpenBackFirst
+        }
+        return when (cameraData!!.cameraFacing) {
+            CameraData.FACING_BACK -> true
+            else -> false
+        }
     }
 
     companion object {
